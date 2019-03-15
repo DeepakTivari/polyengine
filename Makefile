@@ -1,8 +1,17 @@
-# Compile
-nasm -f elf64 hello.asm -o hello.o
+ASM = nasm
 
-# Link
-ld hello.o -o hello
+CC = gcc
 
-# Run
-./hello
+AFLAGS = -felf64 -g -F dwarf
+
+CFLAGS = -c -Wall -02 -gcc
+
+LFLAGS = -no-pie
+
+all: virus
+
+virus: virus.o
+	$(CC) $(LFLAGS) $< -o $@
+
+virus.o: virus.asm turnpoly.inc
+	$(ASM) $(AFLAGS) $< -o $@

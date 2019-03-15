@@ -1,1 +1,3 @@
-# polyengine
+To run:
+
+     make

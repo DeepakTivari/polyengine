@@ -8,19 +8,19 @@ SECTION .DATA
 
 ; Code goes in the text section
 SECTION .TEXT
-	GLOBAL _start 
+	GLOBAL main 
 
 main:
-    call _decrypt
-    call _start
+    call decrypt
+    call virus
     ret
 
-_decrypt:
-    DECRYPTOR_SECTION _start, _start.end-_start
+decrypt:
+    DECRYPTOR_SECTION virus, virus.end-virus
     ret
 
 align 16
-_start:
+virus:
 	mov eax,4            ; 'write' system call = 4
 	mov ebx,1            ; file descriptor 1 = STDOUT
 	mov ecx,hello        ; string to write
