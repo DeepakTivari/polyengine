@@ -2,13 +2,13 @@
 %include "turnpoly.inc"
 
 ; Define variables in the data section
-SECTION .DATA
+section .data
 	hello:     db 'Hello world!',10
 	helloLen:  equ $-hello
 
 ; Code goes in the text section
-SECTION .TEXT
-	GLOBAL main 
+section .text
+	global main
 
 main:
     call decrypt

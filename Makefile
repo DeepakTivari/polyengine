@@ -4,7 +4,7 @@ CC = gcc
 
 AFLAGS = -felf64 -g -F dwarf
 
-CFLAGS = -c -Wall -02 -gcc
+CFLAGS = -c -Wall -02 -g
 
 LFLAGS = -no-pie
 
