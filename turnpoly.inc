@@ -8,6 +8,6 @@ push r13
 call getpagesize
 mov rcx, rax
 
-pop r12
 pop r13
+pop r12
 %endmacro
