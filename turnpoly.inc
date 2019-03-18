@@ -12,7 +12,7 @@ extern mprotect
 %define OPCODE_NOP 0x90
 
 ; the size of the encryption/decryption functions
-%define POLY_FUNC_SIZE 0x5
+%define POLY_FUNC_SIZE 0x100
 
 ; %1 the label of the section to decrypt
 ; %2 the size of the section to decrypt
