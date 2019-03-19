@@ -147,20 +147,12 @@ int main(int argc, char* argv[])
 	free(exe_data); 	return 0;
 	}
 
-	// initialize the output filename
-	char out_filename[FILENAME_MAX];
-	snprintf(out_filename, FILENAME_MAX, "%s_poly", exe_filename);
 
-	// open the output file
-	FILE* out_file = fopen(out_filename, "wb");
-	if(!out_file)
-	{
-		printf("failed to open %s\n", out_filename);
-	free(exe_data); 	return 0;
-	}
 
-	// write the modified executable data
-fwrite(exe_data, exe_size, 1, out_file);
+    std::ofstream outfile ("virus_poly",std::ofstream::binary);
+    // write to outfile
+    outfile.write (exe_data,exe_size);
+
 
 
 
