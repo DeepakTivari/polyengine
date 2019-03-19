@@ -122,23 +122,23 @@ int main(int argc, char* argv[])
 	// fclose(exe_file);
 
 	// check the input parameters
-	if(enc_offset >= exe_size)
-	{
-		printf("The offset of the section to encrypt is invalid\n");
-	free(exe_data); 	return 0;
-	}
+	// if(enc_offset >= exe_size)
+	// {
+	// 	printf("The offset of the section to encrypt is invalid\n");
+	// free(exe_data); 	return 0;
+	// }
 
 	if(dec_offset >= exe_size)
 	{
 		printf("The offset in which to place the decrypt function is invalid\n");
-	free(exe_data); 	return 0;
+	    free(exe_data); 	return 0;
 	}
 
-	if(enc_size == 0 || (enc_size & 0x0F) != 0)
-	{
-		printf("The section to encrypt size must be a multiple of 16\n");
-	free(exe_data); 	return 0;
-	}
+	// if(enc_size == 0 || (enc_size & 0x0F) != 0)
+	// {
+	// 	printf("The section to encrypt size must be a multiple of 16\n");
+	// free(exe_data); 	return 0;
+	// }
 
 	// call the polymorphic engine
 	if(poly_engine(exe_data, enc_offset, enc_size, dec_offset) != 0)
