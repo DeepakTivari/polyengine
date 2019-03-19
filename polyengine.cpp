@@ -12,13 +12,6 @@ int main(int argc, char* argv[])
 {
 
 
-    if(argc != 5) {
-
-        cout << "Invalid number of arguments!" << endl;
-        return 1;
-    }
-
-	// seed the random number generator
 	srand(time(NULL));
 
 	// get the arguments
@@ -28,32 +21,94 @@ int main(int argc, char* argv[])
 	const size_t dec_offset  = strtol(argv[4], nullptr, 16);
 
 
-
-
-    ifstream ifd(virus_name, ios::binary | ios::ate);
-    size_t exe_size = ifd.tellg();
-    ifd.seekg(0, ios::beg);
-    char* exe_data = new char[exe_size];
-    ifd.read(exe_data, exe_size);
-    
-// This is the bug 
-    cout << exe_size;
-	printf("The size is %zd\n", exe_size);
-
-	if(dec_offset >= exe_size)
+	// open the executable file
+	FILE* exe_file = fopen(virus_name, "rb");
+	if(!exe_file)
 	{
-		printf("The offset in which to place the decrypt function is invalid\n");
-	    free(exe_data); 	return 0;
+		printf("Failed to open %s\n", enc_offset);
+		return -1;
 	}
-// End of bug 
+
+	// get the size of the executable file
+	size_t exe_size;
+	fseek(exe_file, 0, SEEK_END);
+	exe_size = ftell(exe_file);
+	rewind(exe_file);
 
 
-	// call the polymorphic engine
-	poly_engine(exe_data, enc_offset, enc_size, dec_offset);
+    char* exe_data =  (char *) malloc(exe_size);
+    fread(exe_data, exe_size, 1, exe_file);
+    if(poly_engine(exe_data, enc_offset, enc_size, dec_offset) != 0)
+	{
+		printf("An error occured in the polymorphic engine\n");
+
+	}
+
+    	// open the output file
+	// FILE* out_file = fopen("virus_poly", "wb");
 
     std::ofstream outfile ("virus_poly",std::ofstream::binary);
     // write to outfile
     outfile.write (exe_data,exe_size);
+
+	// // write the modified executable data
+	// if(!fwrite(exe_data, exe_size, 1, out_file))
+	// {
+	// 	printf("failed to write into");
+	// }
+
+
+
+
+
+
+
+
+
+//     if(argc != 5) {
+
+//         cout << "Invalid number of arguments!" << endl;
+//         return 1;
+//     }
+
+// 	// seed the random number generator
+// 	srand(time(NULL));
+
+// 	// get the arguments
+// 	const char* virus_name = argv[1];
+// 	const size_t enc_offset  = strtol(argv[2], nullptr, 16);
+// 	const size_t enc_size    = strtol(argv[3], nullptr, 16);
+// 	const size_t dec_offset  = strtol(argv[4], nullptr, 16);
+
+
+
+
+//     ifstream ifd(virus_name, ios::binary | ios::ate);
+//     size_t exe_size = ifd.tellg();
+//     ifd.seekg(0, ios::beg);
+//     char* exe_data = new char[exe_size];
+//     ifd.read(exe_data, exe_size);
+    
+// // This is the bug 
+//     cout << exe_size;
+//     cout << exe_size;
+//     cout << exe_size;
+// 	// printf("The size is %zd\n", exe_size);
+
+// 	// if(dec_offset >= exe_size)
+// 	// {
+// 	// 	printf("The offset in which to place the decrypt function is invalid\n");
+// 	//     free(exe_data); 	return 0;
+// 	// }
+// // End of bug 
+
+
+// 	// call the polymorphic engine
+// 	poly_engine(exe_data, enc_offset, enc_size, dec_offset);
+
+//     std::ofstream outfile ("virus_poly",std::ofstream::binary);
+//     // write to outfile
+//     outfile.write (exe_data,exe_size);
 
 
 
