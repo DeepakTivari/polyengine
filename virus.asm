@@ -1,12 +1,11 @@
 
-%include "turnpoly.inc"
+%include "turnpoly.asm"
 
 ; Define variables in the data section
 section .data
 	hello:     db 'Hello world!',10
 	helloLen:  equ $-hello
 
-; Code goes in the text section
 section .text
 	global main
 
@@ -16,7 +15,7 @@ main:
     ret
 
 decrypt:
-    DECRYPTOR_SECTION virus, virus.end-virus
+    DECRYPTION virus, virus.end-virus
     ret
 
 align 16

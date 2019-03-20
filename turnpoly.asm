@@ -1,7 +1,7 @@
 extern getpagesize
 extern mprotect
 
-%macro DECRYPTOR_SECTION 2
+%macro DECRYPTION 2
 push r12
 push r13
 
