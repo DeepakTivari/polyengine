@@ -16,7 +16,7 @@ polyengine: polyengine.o morphengine.o
 virus: virus.o
 	$(CC) $(LFLAGS) $< -o $@
 
-virus.o: virus.asm turnpoly.asm
+virus.o: virus.asm turnpoly.asm.inc
 	$(ASM) $(AFLAGS) $< -o $@
 
 polyengine.o: polyengine.cpp
