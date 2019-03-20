@@ -36,7 +36,7 @@ extern rand
 %define OPCODE_NOT_R   0xD0
 %define OPCODE_NEG_R   0xD8
 
-global poly_engine
+global morph_engine
 
 section .data
 	; the table of all the possible ModRegRM fields allowed
@@ -73,7 +73,7 @@ section .text
 ; 
 ; [out] rax : 0 if everything went fine
 ;
-poly_engine:
+morph_engine:
 	push    rbp
 	mov     rbp, rsp
 	and     rsp, -0x10

