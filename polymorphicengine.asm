@@ -1,7 +1,7 @@
 
 ; cpu x86-64
 
-%include "turnpoly.inc"
+%include "template.asm.inc"
 
 extern rand
 

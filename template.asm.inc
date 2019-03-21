@@ -37,12 +37,12 @@ extern mprotect
 	call    mprotect
 	mov     rdi, %1
 	lea     rsi, [rdi+%2]
-.makepoly_loop:
+.decryption_loop:
 	mov     eax, [rdi    ]
 	mov     ecx, [rdi+0x4]
 	mov     edx, [rdi+0x8]
 	mov     ebx, [rdi+0xC]
-.makepoly_func:
+.decryption_function:
 	times POLY_FUNC_SIZE db OPCODE_NOP
 	mov     [rdi    ], eax
 	mov     [rdi+0x4], ecx
@@ -50,7 +50,7 @@ extern mprotect
 	mov     [rdi+0xC], ebx
 	add     rdi, 0x10
 	cmp     rdi, rsi
-	jne     .makepoly_loop
+	jne     .decryption_loop
 	mov     rdi, r12
 	mov     rsi, r13
 	mov     edx, (PROT_READ | PROT_EXEC)

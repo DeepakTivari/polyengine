@@ -1,5 +1,5 @@
 
-%include "turnpoly.inc"
+%include "template.asm.inc"
 
 ; Define variables in the data section
 section .data
