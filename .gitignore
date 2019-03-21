@@ -3,3 +3,5 @@ polyengine
 *.o
 virus_poly
 .vscode
+polymake
+virus_morph
