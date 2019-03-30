@@ -43,7 +43,7 @@ push r15
 	; mov     r13, rsi
 
 	mov rdi, 0x400000
-	; mov rsi, 0x1000 
+	mov rsi, 0x1000 
 	; mov r12, rdi
 	; mov r13, rsi
 	
