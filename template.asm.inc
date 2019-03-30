@@ -17,8 +17,16 @@ extern mprotect
 ; %1 the label of the section to decrypt
 ; %2 the size of the section to decrypt
 %macro DECRYPTOR_SECTION 2
-	push    r12
-	push    r13
+push rsp
+push rbp
+push rbx
+push r12
+push r13
+push r14
+push r15
+
+
+
 	call    getpagesize
 	mov     rcx, rax
 	sub     rcx, 1
@@ -37,6 +45,10 @@ extern mprotect
 	call    mprotect
 	mov     rdi, %1
 	lea     rsi, [rdi+%2]
+
+
+
+
 .decryption_loop:
 	mov     eax, [rdi    ]
 	mov     ecx, [rdi+0x4]
@@ -51,11 +63,17 @@ extern mprotect
 	add     rdi, 0x10
 	cmp     rdi, rsi
 	jne     .decryption_loop
-	mov     rdi, r12
-	mov     rsi, r13
-	mov     edx, (PROT_READ | PROT_EXEC)
-	call    mprotect
-	pop     r13
-	pop     r12
+	; mov     rdi, r12
+	; mov     rsi, r13
+	; mov     edx, (PROT_READ | PROT_EXEC)
+	; call    mprotect
+
+pop r15
+pop r14
+pop r13
+pop r12
+pop rbx
+pop rbp
+pop rsp
 %endmacro
 
