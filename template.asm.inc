@@ -27,20 +27,26 @@ push r15
 
 
 
-	call    getpagesize
-	mov     rcx, rax
-	sub     rcx, 1
-	mov     rdi, %1
-	mov     rsi, %2
-	mov     rax, rdi
-	add     rsi, rcx
-	not     rcx
-	and     rdi, rcx
-	sub     rax, rdi
-	add     rsi, rax
-	and     rsi, rcx
-	mov     r12, rdi
-	mov     r13, rsi
+	; call    getpagesize
+	; mov     rcx, rax
+	; sub     rcx, 1
+	; mov     rdi, %1
+	; mov     rsi, %2
+	; mov     rax, rdi
+	; add     rsi, rcx
+	; not     rcx
+	; and     rdi, rcx
+	; sub     rax, rdi
+	; add     rsi, rax
+	; and     rsi, rcx
+	; mov     r12, rdi
+	; mov     r13, rsi
+
+	mov rdi, 0x400000
+	; mov rsi, 0x1000 
+	; mov r12, rdi
+	; mov r13, rsi
+	
 	mov     edx, (PROT_READ | PROT_WRITE | PROT_EXEC)
 	call    mprotect
 	mov     rdi, %1
