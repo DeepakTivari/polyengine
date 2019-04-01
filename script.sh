@@ -4,9 +4,10 @@
 git clean -xdf
 make
 
-objdump -x virus | grep -E "virus|decrypt"
-echo polyengine virus 730 30 5f8
+# objdump -x virus | grep -E "virus|decrypt"
+# echo polymake virus 5a0 30 563
 
-# ./polyengine virus 6e0 30 5a8
-# chmod +x virus_poly
-# ./virus_poly
+./polymake virus 5a0 30 563
+chmod +x virus_morph
+./virus_morph
+md5sum virus_morph
