@@ -11,10 +11,10 @@ extern mprotect
 %define PROT_EXEC  0x4
 
 ; opcode for no operation
-%define OPCODE_NOP 0x90
+%define OP_NOP 0x90
 
 ; the size of the encrypt and decrypt function
-%define POLY_FUNC_SIZE 0x10
+%define FUNC_SIZE 0x10
 
 
 ; this function will take in 2 arguments
@@ -57,7 +57,7 @@ lea rdi, [rsi+%2]
 	mov ebx, [rsi+0xC]
 
 .decryption_function:
-	times POLY_FUNC_SIZE db OPCODE_NOP
+	times FUNC_SIZE db OP_NOP
 	; put back the data to where it was taken from
 	mov [rsi], eax
 	mov [rsi+0x4], ecx

