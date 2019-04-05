@@ -56,6 +56,7 @@ mov r12, .encryption_function
 mov rbx, .encryption_function
 add rbx, FUNC_SIZE
 sub rbx, 0x1
+; must use rbx here because rbx is the only one that will not change on rand call later
 mov r13, [rbp-0x28]
 add r13, [rbp-0x10] 
 add r13, FUNC_SIZE
@@ -80,6 +81,7 @@ mov r15, ModRegRM
 	sub r13, 0x2
 	xor rax, rax
 	mov al, [r15+rdx*4]
+	; this will always result in and address that contains an modregrm opcode
 	xor rbx, rbx
 	mov bh, al
 	mov ah, OPCODE_ADD_REG
