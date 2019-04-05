@@ -82,13 +82,13 @@ mov r15, ModRegRM
 	xor rax, rax
 	mov al, [r15+rdx*4]
 	; this will always result in and address that contains an modregrm opcode
-	xor rbx, rbx
-	mov bh, al
+	xor rcx, rcx
+	mov ch, al
 	mov ah, OPCODE_ADD_REG
-	mov bl, OPCODE_SUB_REG
+	mov cl, OPCODE_SUB_REG
 	xchg al, ah
 	mov [r12], ax
-	mov [r13], bx
+	mov [r13], cx
 	add r12, 0x2
 	jmp .encrypt_logic_loop
 
