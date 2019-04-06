@@ -1,7 +1,6 @@
 virus
 polyengine
 *.o
-virus_morph
 .vscode
 polymake
-cpp_works/
+virus_morph

@@ -6,7 +6,7 @@
 #include <iostream>
 #include <fstream>
 
-extern "C" int morph_engine(char* exe_data, size_t virus_encrypt_offset, size_t virus_encrypt_size, size_t virus_decrypt_offset);
+extern "C" int morph_engine(char* exe_data, size_t virus_instruction_begin, size_t virus_encrypt_size, size_t virus_decrypt_offset);
 using namespace std;
 int main(int argc, char* argv[])
 {
@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
 
 	// get the arguments
 	const char* virus_name = argv[1];
-	const size_t virus_encrypt_offset  = strtoull(argv[2], nullptr, 16);
+	const size_t virus_instruction_begin  = strtoull(argv[2], nullptr, 16);
 	const size_t virus_encrypt_size    = strtoull(argv[3], nullptr, 16);
 	const size_t virus_decrypt_offset  = strtoull(argv[4], nullptr, 16);
 
@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
 
     char* virus_data = new char[virus_size];
     fread(virus_data, virus_size, 1, virus_file);
-    if(morph_engine(virus_data, virus_encrypt_offset, virus_encrypt_size, virus_decrypt_offset) != 0)
+    if(morph_engine(virus_data, virus_instruction_begin, virus_encrypt_size, virus_decrypt_offset) != 0)
 	{
 		cout << "Encoutered errors in the morph engine" << endl;
 
@@ -61,7 +61,6 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-// https://stackoverflow.com/questions/22129349/reading-binary-file-to-unsigned-char-array-and-write-it-to-another
 // https://stackoverflow.com/questions/22129349/reading-binary-file-to-unsigned-char-array-and-write-it-to-another
 // https://stackoverflow.com/questions/43765881/c-reading-binary-files
 // http://www.cplusplus.com/forum/beginner/176692/
