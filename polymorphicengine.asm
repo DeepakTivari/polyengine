@@ -109,17 +109,17 @@ mov r15, ModRegRM
 .encryption_loop:
 	; load first 16bytes of memory data to registers
 	mov eax, [rsi]
-	mov ecx, [rsi+0x4]
-	mov edx, [rsi+0x8]
-	mov ebx, [rsi+0xC]
+	mov ebx, [rsi+0x4]
+	mov ecx, [rsi+0x8]
+	mov edx, [rsi+0xC]
 
 .encryption_function:
 	times FUNC_SIZE db OP_NOP
 	; put back the data to where it was taken from
 	mov [rsi], eax
-	mov [rsi+0x4], ecx
-	mov [rsi+0x8], edx
-	mov [rsi+0xC], ebx
+	mov [rsi+0x4], ebx
+	mov [rsi+0x8], ecx
+	mov [rsi+0xC], edx
 	add rsi, 0x10
 	; add 10h to rsi, fast forwards rsi to decrypt next 16bytes
 	cmp rsi, rdi
