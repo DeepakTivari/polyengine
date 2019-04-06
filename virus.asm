@@ -11,15 +11,15 @@ section .text
 
 main:
     call decrypt
-    call virus
+    call payload
     ret
 
 decrypt:
-    DECRYPTOR_SECTION virus, virus.end-virus
+    DECRYPTOR_SECTION payload, payload.end-payload
     ret
 
 align 16
-virus:
+payload:
 	mov eax,4            ; 'write' system call = 4
 	mov ebx,1            ; file descriptor 1 = STDOUT
 	mov ecx,hello        ; string to write
