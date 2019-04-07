@@ -26,8 +26,9 @@ payload:
 	mov edx,helloLen     ; length of string to write
 	int 80h              ; call the kernel
 
-	; mov qword rdi, 0xabcd  ;in case of x86_64 params are passed in RDI,
+	mov qword rdi, 0xabcd  ;in case of x86_64 params are passed in RDI,
 						;RSI, RDX, RCX, R8, R9, stack, in that order
+	call printVal
 	; Terminate program
 	mov eax,1            ; 'exit' system call
 	mov ebx,0            ; exit with error code 0

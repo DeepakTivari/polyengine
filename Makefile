@@ -15,7 +15,7 @@ polymake: polyengine.o polymorphicengine.o
 	$(GCC) $(LFLAGS) $^ -o $@
 	
 virus:  printVal.c virus.o
-	$(GCC) $(LFLAGS) $^ -o $@
+	$(CC) $(LFLAGS) $^ -o $@
 
 virus.o: virus.asm template.asm.inc
 	$(ASM) $(AFLAGS) $< -o $@
