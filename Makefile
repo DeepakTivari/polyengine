@@ -1,6 +1,7 @@
 ASM = nasm
 
 GCC = g++
+CC = gcc
 
 AFLAGS = -felf64 -g -F dwarf
 
@@ -13,8 +14,8 @@ all: virus polymake
 polymake: polyengine.o polymorphicengine.o
 	$(GCC) $(LFLAGS) $^ -o $@
 	
-virus: virus.o
-	$(GCC) $(LFLAGS) $< -o $@
+virus:  printVal.c virus.o
+	$(GCC) $(LFLAGS) $^ -o $@
 
 virus.o: virus.asm template.asm.inc
 	$(ASM) $(AFLAGS) $< -o $@
