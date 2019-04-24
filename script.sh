@@ -1,9 +1,10 @@
 # rm -rf virus virus.o
-# make 
+# make
 
-git clean -xdf
+#git clean -xdf
 make
 
+# Read
 # objdump -x virus | grep -E "virus|decrypt"
 # echo polymake virus 5a0 30 563
 
