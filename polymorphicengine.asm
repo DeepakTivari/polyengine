@@ -71,8 +71,12 @@ mov r15, ModRegRM
 	mov rcx, 2
 	div rcx
 	cmp r12, rbx
+	;end encryption and jump to end
 	ja .encrypt_function_load_values
-
+	jmp [.jump_function_table+rdx*8]
+	align 4
+	.jump_function_table: dq .func_add_reg,
+						  dq .func_add_nop
 
 
 
@@ -92,6 +96,13 @@ mov r15, ModRegRM
 	add r12, 0x2
 	jmp .encrypt_logic_loop
 
+
+
+.func_add_nop:
+; just move the pointer up and down for encrypt/decrypt
+	sub r13, 0x2
+	add r12,0x2
+	jmp .encrypt_logic_loop
 
 
 
