@@ -8,7 +8,7 @@ AFLAGS = -felf64 -g -F dwarf
 CFLAGS = -c  -Wall -O2 -g
 
 LFLAGS = -no-pie 
-KFLAGS = -no-pie -nostartfiles -m64 -g
+KFLAGS = -no-pie -nostartfiles -m64 -g -falign-functions=16
 all: virus polymake
 
 polymake: polyengine.o polymorphicengine.o
