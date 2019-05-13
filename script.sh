@@ -4,7 +4,7 @@
 #git clean -xdf
 make
 
- objdump -x virus | grep -E "payload|decrypt"
+ objdump -x virus | grep -E "main|decrypt"
 # echo polymake virus 5a0 30 563
 
 #./polymake virus 5d0 30 598

@@ -1,11 +1,14 @@
 %include "template.asm.inc"
 extern main
-global _start
 
 ; Define variables in the data section
 section .data
 	hello:     db 'Hello world!',10
 	helloLen:  equ $-hello
+
+; Code goes in the text section
+section .text
+	global _start
 
 align 16
 _start:             ; Global entry point
@@ -53,6 +56,7 @@ _start:             ; Global entry point
 
 decrypt:
     DECRYPTOR_SECTION main, 100h
+    ; DECRYPTOR_SECTION payload, payload.end-payload
     ret
 
 align 16
