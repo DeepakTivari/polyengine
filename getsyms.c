@@ -1,18 +1,13 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <time.h>
+/*
+Sophia Fondell
+9/26/18
+CS 410: Assignment 0 - Task A - getsyms.c
+*/
+
 #include <string.h>
 #include <unistd.h>
-#include <bfd.h>
-
-typedef struct node {
-  const char* name;
-  unsigned int vma;
-  struct node * next;
-} sym;
-
-sym * getsymtable(char *file);
+#include <stdlib.h>
+#include "objsym.h"
 
 // Function to convert unsigned integer to char array w base
 char* tostring(int val, char* buf, int base) {
@@ -53,18 +48,10 @@ void print_offset(const char* str, int offset) {
 	}
 }
 
-
-
-int polymorphicengine(int argc, char* argv[])
-{
-      int i;
-      for (i=0; i<argc; ++i) {
-      printf("argv[%d]=%s\n", i, argv[i]);
-      }
-
-
+// Main function to call library function and print output
+int main(int argc, char *argv[]) {
 	// Filename cmd line arg
-	char *filename = argv[0];
+	char *filename = argv[1];
 	// Call library function to get a pointer to a ll
 	sym * head = getsymtable(filename);
 	// Recursively iterate through ll and print to std out
@@ -87,6 +74,5 @@ int polymorphicengine(int argc, char* argv[])
 		current = current -> next;
 	}
 
-
-      return 0;
+	return 0;
 }

