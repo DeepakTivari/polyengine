@@ -49,11 +49,6 @@ _start:             ; Global entry point
 
 
 
-; _start:   
-    ; call decrypt
-    ; call payload
-    ; ret
-
 decrypt:
 	; there is automatic calculation happening inside DECRYPTOR_SECTION function which is (_start-main) == xxxh worth of memory that will be encrypted/decrypted
     DECRYPTOR_SECTION main, _start
