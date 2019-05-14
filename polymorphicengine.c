@@ -1,9 +1,10 @@
 #include <stdio.h>
 int polymorphicengine(int argc, char* argv[])
 {
-      printf("%d\n", argc);
-      int num =9;
-      printf("%d\n", num);
+      int i;
+      for (i=0; i<argc; ++i) {
+      printf("argv[%d]=%s\n", i, argv[i]);
+      }
       return 0;
 }
 

