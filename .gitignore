@@ -5,3 +5,6 @@ polyengine
 polymake
 virus_morph
 hello
+*.id*
+*.nam
+*.til
