@@ -8,7 +8,7 @@ extern rand
 
 section .data
 
-	ModRegRM  dd 0xD8, 0xC1
+	ModRegRM  dd 0xCB, 0xD8, 0xC1, 0xC8, 0xD0, 0xD1, 0xD9, 0xC2, 0xCA, 0xDA, 0xC3, 0xD3
 
 section .text
 
@@ -71,13 +71,23 @@ mov r15, ModRegRM
 	mov rcx, 2
 	div rcx
 	cmp r12, rbx
+	;end encryption and jump to end
 	ja .encrypt_function_load_values
-
+	jmp [.jump_function_table+rdx*8]
+	align 4
+	.jump_function_table: dq .func_add_reg,
+						  dq .func_add_nop
 
 
 
 
 .func_add_reg:
+	call rand
+	xor rdx, rdx
+	mov rcx, 12
+	div rcx
+	cmp r12, rbx
+
 	sub r13, 0x2
 	xor rax, rax
 	mov al, [r15+rdx*4]
@@ -92,6 +102,13 @@ mov r15, ModRegRM
 	add r12, 0x2
 	jmp .encrypt_logic_loop
 
+
+
+.func_add_nop:
+; just move the pointer up and down for encrypt/decrypt
+	sub r13, 0x2
+	add r12,0x2
+	jmp .encrypt_logic_loop
 
 
 
