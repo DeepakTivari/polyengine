@@ -31,24 +31,27 @@ _start:             ; Global entry point
 	mov rsi, rsp
 	lea rdx, [rsp+rdi+8*8]
 	push rdi
-	call polymorphicengine
+	call main
 
+	mov rdi, rax
+	mov eax, 1
+	int 80h
 
 	; reload the initial program, state
 	mov rsp, rbx 
 	mov rdi, r14
 	mov rsi, r15
 
-	; call the external virus program
-	xor rbp, rbp
-	pop rdi
-	mov rsi, rsp
-	lea rdx, [rsp+rdi+8*8]
-	push rdi
-	call main
-	mov rdi, rax
-	mov eax, 1
-	int 80h
+	; ; call the external virus program
+	; xor rbp, rbp
+	; pop rdi
+	; mov rsi, rsp
+	; lea rdx, [rsp+rdi+8*8]
+	; push rdi
+	; call main
+	; mov rdi, rax
+	; mov eax, 1
+	; int 80h
 
 
 
