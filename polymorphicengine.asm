@@ -5,6 +5,7 @@ global morph_engine
 extern rand
 %define OPCODE_ADD_REG 0x01
 %define OPCODE_SUB_REG 0x29
+%define OPCODE_XOR     0x31
 
 section .data
 
@@ -68,7 +69,8 @@ mov r15, ModRegRM
 .encrypt_logic_loop:
 	call rand
 	xor rdx, rdx
-	mov rcx, 2
+	mov rcx, 3
+	; this modding value should indicate number of functions available
 	div rcx
 	cmp r12, rbx
 	;end encryption and jump to end
@@ -76,7 +78,8 @@ mov r15, ModRegRM
 	jmp [.jump_function_table+rdx*8]
 	align 4
 	.jump_function_table: dq .func_add_reg,
-						  dq .func_add_nop
+						  dq .func_nop,
+						  dq .func_xor
 
 
 
@@ -85,6 +88,7 @@ mov r15, ModRegRM
 	call rand
 	xor rdx, rdx
 	mov rcx, 12
+	; this modding value should indicate number of modregrm values available
 	div rcx
 	cmp r12, rbx
 
@@ -104,12 +108,33 @@ mov r15, ModRegRM
 
 
 
-.func_add_nop:
+.func_nop:
 ; just move the pointer up and down for encrypt/decrypt
 	sub r13, 0x2
 	add r12,0x2
 	jmp .encrypt_logic_loop
 
+.func_xor:
+	call rand
+	xor rdx, rdx
+	mov rcx, 12
+	; this modding value should indicate number of modregrm values available
+	div rcx
+	cmp r12, rbx
+
+	sub r13, 0x2
+	xor rax, rax
+	mov al, [r15+rdx*4]
+	; this will always result in and address that contains an modregrm opcode
+	xor rcx, rcx
+	mov ch, al
+	mov ah, OPCODE_XOR
+	mov cl, OPCODE_XOR
+	xchg al, ah
+	mov [r12], ax
+	mov [r13], cx
+	add r12, 0x2
+	jmp .encrypt_logic_loop	
 
 
 .encrypt_function_load_values:
