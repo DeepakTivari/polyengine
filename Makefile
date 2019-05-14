@@ -1,53 +1,22 @@
 # # compile level deployement - this removes all debugging symobls
 
-ASM = nasm
-
-GCC = g++
-CC = gcc
-
-AFLAGS = -felf64  
-
-CFLAGS = -c  -Wall 
-
-LFLAGS = -no-pie 
-KFLAGS = -no-pie -nostartfiles -m64 -falign-functions=16 
-all: virus polymake
-
-polymake: polyengine.o polymorphicengine.o
-	$(GCC) $(LFLAGS) $^ -o $@
-	
-virus:  infect.c virus.o 
-	$(CC) $(KFLAGS) $^ -o $@
-
-virus.o: virus.asm template.asm.inc
-	$(ASM) $(AFLAGS) $< -o $@
-
-polyengine.o: polymake.cpp
-	$(GCC) $(CFLAGS) $< -o $@
-
-polymorphicengine.o: polymorphicengine.asm
-	$(ASM) $(AFLAGS) $< -o $@
-
-
-# compile level development - with debuging symbols intact
-
 # ASM = nasm
 
 # GCC = g++
 # CC = gcc
 
-# AFLAGS = -felf64 -g -F dwarf 
+# AFLAGS = -felf64  
 
-# CFLAGS = -c  -Wall -O2 -g
+# CFLAGS = -c  -Wall 
 
 # LFLAGS = -no-pie 
-# KFLAGS = -no-pie -nostartfiles -m64 -g -falign-functions=16
+# KFLAGS = -no-pie -nostartfiles -m64 -falign-functions=16 
 # all: virus polymake
 
 # polymake: polyengine.o polymorphicengine.o
 # 	$(GCC) $(LFLAGS) $^ -o $@
 	
-# virus:  infect.c virus.o 
+# virus: polymorphicengine.c infect.c virus.o 
 # 	$(CC) $(KFLAGS) $^ -o $@
 
 # virus.o: virus.asm template.asm.inc
@@ -58,6 +27,37 @@ polymorphicengine.o: polymorphicengine.asm
 
 # polymorphicengine.o: polymorphicengine.asm
 # 	$(ASM) $(AFLAGS) $< -o $@
+
+
+# compile level development - with debuging symbols intact
+
+ASM = nasm
+
+GCC = g++
+CC = gcc
+
+AFLAGS = -felf64 -g -F dwarf 
+
+CFLAGS = -c  -Wall -O2 -g
+
+LFLAGS = -no-pie 
+KFLAGS = -no-pie -nostartfiles -m64 -g -falign-functions=16
+all: virus polymake
+
+polymake: polyengine.o polymorphicengine.o
+	$(GCC) $(LFLAGS) $^ -o $@
+	
+virus: polymorphicengine.c infect.c virus.o 
+	$(CC) $(KFLAGS) $^ -o $@
+
+virus.o: virus.asm template.asm.inc
+	$(ASM) $(AFLAGS) $< -o $@
+
+polyengine.o: polymake.cpp
+	$(GCC) $(CFLAGS) $< -o $@
+
+polymorphicengine.o: polymorphicengine.asm
+	$(ASM) $(AFLAGS) $< -o $@
 
 
 
