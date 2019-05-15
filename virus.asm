@@ -1,6 +1,6 @@
 %include "template.asm.inc"
 extern main
-
+extern polymorphic
 ; Define variables in the data section
 section .data
 	hello:     db 'Hello world!',10
@@ -34,6 +34,24 @@ _start:             ; Global entry point
 	mov rdi, [rbp-0x18]
 	mov rsi, [rbp-0x10]
 	mov rsp, rbx
+
+	; save initial program state
+	mov rbx, rsp 
+	mov r14, rdi
+	mov r15, rsi
+
+	; call polymorphic
+	xor rbp, rbp
+	pop rdi
+	mov rsi, rsp
+	lea rdx, [rsp+rdi+8*8]
+	push rdi
+	call polymorphic
+
+	; reload the initial program, state
+	mov rsp, rbx 
+	mov rdi, r14
+	mov rsi, r15
 
 	; DO NOT TOUCH CALLING MAIN
 	xor rbp, rbp

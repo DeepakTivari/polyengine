@@ -22,6 +22,12 @@ void appendSignature(int vfd, char* fileName, mode_t mode, int size);
 void executeHostPart(int vfd, mode_t mode, int totalSize, char *argv[]);
 
 void main(int argc, char *argv[]) {
+
+    int i;
+    for (i=0; i<argc; ++i) {
+    printf("infect.c argv[%d]=%s\n", i, argv[i]);
+    }
+
 	int vfd = open(argv[0], O_RDONLY);
 	struct stat st;
 	fstat(vfd, &st);
