@@ -2,7 +2,7 @@
 
 extern getpagesize
 extern mprotect
-
+global decrypt
 ; memory protection permission
 
 %define PROT_NONE  0x0
@@ -39,8 +39,8 @@ mov rdi, %1
 and rdi, rcx
 ; AND them and the result will be stored in rcx
 ; rdi must hold the page_start address
-
-mov rsi, %2      ;rsi = end
+; mov rsi, %2      ;rsi = end
+lea rsi, [rdi+%2]      ;rsi = end
 sub rsi,rdi      ;rsi = end - aligned_start = length
 
 mov rdx, 0x7
