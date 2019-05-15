@@ -31,6 +31,7 @@ push r15
 
 call getpagesize
 ; rax has 0x1000
+mov r9, rax ; for later usage
 mov rcx, rax
 ; save rax for later use when passing to mprotect
 sub	rcx, 0x1
@@ -39,6 +40,7 @@ mov	rdi, %1
 and rdi, rcx
 ; AND them and the result will be stored in rcx
 ; rdi must hold the page_start address
+mov r13, rdi ; keep this safe for comparison later due to page overflow need to get perms on next page
 mov rsi, rax
 ; rsi must have the page length
 mov rdx, 0x7
@@ -52,7 +54,33 @@ mov rdi, %2
 sub rdi, rsi
 lea rdi, [rsi+rdi]
 
+
+; r9 store getpagesize
+; r13 reserve for page start
+; r14 for rsi
+; r15 for rdi
+
 .decryption_loop:
+	; store curr state
+	mov r14, rsi
+	mov r15, rdi
+
+	; check if page start for current rsi = current page start access
+	
+	; rax has 0x1000 which hand over to rcx
+	mov rcx, r9
+	; save rax for later use when passing to mprotect
+	sub	rcx, 0x1
+	not rcx
+	mov	rdi, rsi
+	and rdi, rcx
+	cmp r13, rdi
+	jne .accesspage
+
+	; restore state
+	mov rsi, r14
+	mov rdi, r15
+
 	; load first 16bytes of memory data to registers
 	mov eax, [rsi]
 	mov ebx, [rsi+0x4]
@@ -74,6 +102,29 @@ lea rdi, [rsi+rdi]
 
 
 
+.accesspage:
+	; rax has 0x1000
+	mov rcx, r9
+	; save rax for later use when passing to mprotect
+	sub	rcx, 0x1
+	not rcx
+	mov	rdi, r14
+	and rdi, rcx
+	; AND them and the result will be stored in rcx
+	; rdi must hold the page_start address
+	mov r13, rdi ; keep this safe for comparison later due to page overflow need to get perms on next page
+	mov rsi, rax
+	; rsi must have the page length
+	mov rdx, 0x7
+	; read+write+exec = 0x7
+	call mprotect
+
+	; reload initial state before this func call
+	mov rsi, r14
+	mov rdi, r15
+
+	;return back to decrypt_loop
+	jmp .decryption_loop
 
 
 pop r15
@@ -84,4 +135,3 @@ pop rbx
 pop rbp
 pop rsp
 %endmacro
-
