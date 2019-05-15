@@ -33,23 +33,41 @@ mov [rbp-0x10],	rcx ; offset of decrypter section
 
 
 
-; do stuff here
+; ; do stuff here
+; call getpagesize
+; ; rax has 0x1000
+; mov rcx, rax
+; ; save rax for later use when passing to mprotect
+; sub	rcx, 0x1
+; not rcx
+; mov	rdi, .encryption_function
+; and rdi, rcx
+; ; AND them and the result will be stored in rcx
+; ; rdi must hold the page_start address
+; mov rsi, rax
+; ; rsi must have the page length
+; mov rdx, 0x7
+; ; read+write+exec = 0x7
+; call mprotect
+
+
 call getpagesize
 ; rax has 0x1000
 mov rcx, rax
 ; save rax for later use when passing to mprotect
-sub	rcx, 0x1
+sub rcx, 0x1
 not rcx
-mov	rdi, .encryption_function
+mov rdi, .encryption_function
 and rdi, rcx
 ; AND them and the result will be stored in rcx
 ; rdi must hold the page_start address
-mov rsi, rax
-; rsi must have the page length
+
+lea rsi, [rdi+FUNC_SIZE]      ;rsi = end
+sub rsi,rdi      ;rsi = end - aligned_start = length
+
 mov rdx, 0x7
 ; read+write+exec = 0x7
 call mprotect
-
 
 
 ; set up needed values

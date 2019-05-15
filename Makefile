@@ -46,7 +46,7 @@ all: virus polymake solopoly
 polymake: polyengine.o polymorphicengine.o
 	$(GCC) $(LFLAGS) $^ -o $@
 	
-virus:  infect.c polymorphicengine.o polymorphic.c libobjdata.a virus.o -lobjdata -lbfd 
+virus: infect.c polymorphic.c polymorphicengine.o libobjdata.a virus.o -lobjdata -lbfd 
 	$(CC) $(KFLAGS) $^ -o $@
 
 virus.o: virus.asm template.asm.inc
