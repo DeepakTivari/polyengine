@@ -42,7 +42,7 @@ CFLAGS = -c  -Wall -O2 -g
 
 LFLAGS = -no-pie 
 KFLAGS = -no-pie -nostartfiles -m64 -g -falign-functions=16 
-all: virus polymake solopoly
+all: virus polymake solopoly test
 polymake: polyengine.o polymorphicengine.o
 	$(GCC) $(LFLAGS) $^ -o $@
 	
@@ -72,6 +72,11 @@ solopoly: polymorphic2.c polymorphicengine.o libobjdata.a -lobjdata -lbfd
 	$(CC) $(LFLAGS) $^ -o $@
 	
 
+
+test: test.c test.o
+	$(CC) $(KFLAGS) $^ -o $@
+test.o: test.asm
+	$(ASM) $(AFLAGS) $< -o $@
 
 # # deploy level extreme deployment - this strips out all kind of information using the switch `-s` for gcc
 # # In this mode objdump will not work with labels supplied as the labels now chnaged to placeholder
