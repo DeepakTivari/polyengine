@@ -45,10 +45,9 @@ _start:             ; Global entry point
 	sub rsi, main
 	mov rdx, decrypt.decryption_function
 	call polymorphic
+	mov rdi, rax
 	mov eax, 1
-	mov ebx, 1
 	int 80h
-
 
 
 decrypt:

