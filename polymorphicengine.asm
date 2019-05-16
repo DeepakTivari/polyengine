@@ -142,11 +142,6 @@ mov r15, ModRegRM
 
 
 .encrypt_function_load_values:
-	mov eax,4            ; 'write' system call = 4
-	mov ebx,1            ; file descriptor 1 = STDOUT
-	mov ecx,hello        ; string to write
-	mov edx,helloLen     ; length of string to write
-	int 80h              ; call the kernel
 
 	mov rbx, [rbp-0x28]
 	mov rsi, [rbp-0x20]
