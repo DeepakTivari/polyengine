@@ -1,8 +1,9 @@
-%include "template.asm.inc"
+%include "include.asm.inc"
 
 global morph_engine
 
 extern rand
+extern decrypt_engine
 %define OPCODE_ADD_REG 0x01
 %define OPCODE_SUB_REG 0x29
 %define OPCODE_XOR     0x31

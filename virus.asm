@@ -1,6 +1,9 @@
-%include "template.asm.inc"
+
 extern main
 extern polymorphic
+extern decrypt_engine
+extern decrypt_engine.decryption_function
+extern morph_engine
 ; Define variables in the data section
 section .data
 	hello:     db 'Hello world!',10
@@ -19,7 +22,7 @@ _start:             ; Global entry point
 	mov r14, rdi
 	mov r15, rsi
 
-	call decrypt
+	call decrypt_engine
 
 	; ; reload the initial program, state
 	; mov rsp, rbx 
@@ -43,14 +46,14 @@ _start:             ; Global entry point
 	mov rdi, main
 	mov rsi, _start
 	sub rsi, main
-	mov rdx, decrypt.decryption_function
+	mov rdx, decrypt_engine.decryption_function
 	call polymorphic
 	mov rdi, rax
 	mov eax, 1
 	int 80h
 
 
-decrypt:
-	; there is automatic calculation happening inside DECRYPTOR_SECTION function which is (_start-main) == xxxh worth of memory that will be encrypted/decrypted
-    DECRYPTOR_SECTION main, _start
-    ret
+; decrypt:
+; 	; there is automatic calculation happening inside DECRYPTOR_SECTION function which is (_start-main) == xxxh worth of memory that will be encrypted/decrypted
+;     DECRYPTOR_SECTION main, _start
+;     ret
