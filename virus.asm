@@ -22,6 +22,9 @@ _start:             ; Global entry point
 	mov r14, rdi
 	mov r15, rsi
 
+	mov rdi, main
+	mov rsi, _start
+	sub rsi, main
 	call decrypt_engine
 
 	; ; reload the initial program, state
