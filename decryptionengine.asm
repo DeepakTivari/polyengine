@@ -33,6 +33,8 @@ and rdi, rcx
 ; AND them and the result will be stored in rcx
 ; rdi must hold the page_start address
 ; mov rsi, %2      ;rsi = end
+mov r12, rdi
+mov r13, rsi 
 lea rsi, [rdi+rsi]      ;rsi = end
 sub rsi,rdi      ;rsi = end - aligned_start = length
 
@@ -69,6 +71,11 @@ add rdi, [rbp-0x10]
 	jne .decryption_loop
 
 
+
+mov rdi, r12
+mov rsi, r13
+mov edx, 0x3
+call mprotect
 
 xor rax,rax 
 ; this will ensure rax = 0 , means completed without error

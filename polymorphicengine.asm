@@ -1,7 +1,7 @@
 %include "include.asm.inc"
 
 global morph_engine
-
+extern getpagesize
 extern rand
 extern decrypt_engine
 %define OPCODE_ADD_REG 0x01
@@ -9,7 +9,8 @@ extern decrypt_engine
 %define OPCODE_XOR     0x31
 
 section .data
-
+	hello:     db 'Hello world!',10
+	helloLen:  equ $-hello
 	ModRegRM  dd 0xCB, 0xD8, 0xC1, 0xC8, 0xD0, 0xD1, 0xD9, 0xC2, 0xCA, 0xDA, 0xC3, 0xD3
 
 section .text
@@ -67,7 +68,6 @@ add r13, [rbp-0x10]
 add r13, FUNC_SIZE
 ; end of 
 mov r15, ModRegRM
-
 
 
 .encrypt_logic_loop:
@@ -142,6 +142,11 @@ mov r15, ModRegRM
 
 
 .encrypt_function_load_values:
+	mov eax,4            ; 'write' system call = 4
+	mov ebx,1            ; file descriptor 1 = STDOUT
+	mov ecx,hello        ; string to write
+	mov edx,helloLen     ; length of string to write
+	int 80h              ; call the kernel
 
 	mov rbx, [rbp-0x28]
 	mov rsi, [rbp-0x20]

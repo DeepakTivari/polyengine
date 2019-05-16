@@ -12,6 +12,6 @@ extern mprotect
 %define OP_NOP 0x90
 
 ; the size of the encrypt and decrypt function
-%define FUNC_SIZE 0x100
+%define FUNC_SIZE 0x20
 
 

