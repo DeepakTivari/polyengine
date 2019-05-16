@@ -1,3 +1,4 @@
+; %include "include.asm.inc"
 
 extern main
 extern polymorphic
@@ -12,6 +13,7 @@ section .data
 ; Code goes in the text section
 section .text
 	global _start
+	global work_engine
 
 align 16
 _start:             ; Global entry point
@@ -26,6 +28,8 @@ _start:             ; Global entry point
 	mov rsi, _start
 	sub rsi, main
 	call decrypt_engine
+
+	call work_engine
 
 	; ; reload the initial program, state
 	; mov rsp, rbx 
@@ -65,7 +69,34 @@ _start:             ; Global entry point
 	int 80h              ; call the kernel
 
 
-; decrypt:
+
+work_engine:
+;create stack frame
+push rbp
+mov  rbp, rsp
+sub  rsp, 0x18
+push rbx
+push r12
+push r13
+push r14
+push r15
+
+
+
+
+xor rax,rax 
+; this will ensure rax = 0 , means completed without error
+pop r15
+pop r14
+pop r13
+pop r12
+pop rbx
+mov rsp, rbp
+pop rbp
+ret
+
+
+; work_engine:
 ; 	; there is automatic calculation happening inside DECRYPTOR_SECTION function which is (_start-main) == xxxh worth of memory that will be encrypted/decrypted
 ;     DECRYPTOR_SECTION main, _start
 ;     ret
