@@ -36,8 +36,6 @@ mov [rbp-0x10],	rcx ; offset of decrypter section
 ; call decrypt engine
 add rdi, rsi
 mov rsi, rdx
-call decrypt_engine
-
 call work_engine
 
 ; do stuff here
