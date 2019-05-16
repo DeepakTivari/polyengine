@@ -3,18 +3,40 @@
 
 int main(){
 
-    FILE *f = fopen("virus", "rb");
-    fseek(f, 0, SEEK_END);
-    long fsize = ftell(f);
-    fseek(f, 0, SEEK_SET);  /* same as rewind(f); */
+	// virus name
+	char filename[] = "test";
 
-    char *string = malloc(fsize + 1);
-    fread(string, 1, fsize, f);
-    fclose(f);
+	// open the executable file
+	FILE* exe_file = fopen(filename, "rb");
+	if(!exe_file)
+	{
+		printf("Failed to open %s\n", filename);
+		return -1;
+	}
 
+	// get the size of the executable file
+	size_t exe_size;
+	fseek(exe_file, 0, SEEK_END);
+	exe_size = ftell(exe_file);
+	rewind(exe_file);
+    printf("%ul", exe_size);
+	// allocate the data
+	char* exe_data = malloc(exe_size);
+	if(!exe_data)
+	{
+		fclose(exe_file);
+		printf("Executable data allocation failed\n");
+		return 1;
+	}
 
-	FILE* out_file = fopen("virus_mod", "wb");
-	// write the modified executable data
-	fwrite(string, fsize, 1, out_file);
-    fclose(out_file);
+	// read the entire executable file
+	if(!fread(exe_data, exe_size, 1, exe_file))
+	{
+		fclose(exe_file);
+		printf("Executable file read failed\n");
+	}
+
+	// close the file
+	fclose(exe_file);
+
 }
