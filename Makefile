@@ -22,8 +22,8 @@ virus:  infect.c virus.o
 virus.o: virus.asm template.asm.inc
 	$(ASM) $(AFLAGS) $< -o $@
 
-polyengine.o: polymake.cpp
-	$(GCC) $(CFLAGS) $< -o $@
+polyengine.o: polymake.c
+	$(CC) $(CFLAGS) $< -o $@
 
 polymorphicengine.o: polymorphicengine.asm
 	$(ASM) $(AFLAGS) $< -o $@
