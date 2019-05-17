@@ -114,7 +114,7 @@ mov r15, ModRegRM
 .encrypt_logic_loop:
 	call rand
 	xor rdx, rdx
-	mov rcx, 3
+	mov rcx, 2
 	; this modding value should indicate number of functions available
 	div rcx
 	cmp r12, rbx
@@ -123,7 +123,6 @@ mov r15, ModRegRM
 	jmp [.jump_function_table+rdx*8]
 	align 4
 	.jump_function_table: dq .func_add_reg,
-						  dq .func_nop,
 						  dq .func_xor
 
 
@@ -148,16 +147,12 @@ mov r15, ModRegRM
 	xchg al, ah
 	mov [r12], ax
 	mov [r13], cx
+	mov [r12], ax
+	mov [r13], cx
 	add r12, 0x2
 	jmp .encrypt_logic_loop
 
 
-
-.func_nop:
-; just move the pointer up and down for encrypt/decrypt
-	sub r13, 0x2
-	add r12,0x2
-	jmp .encrypt_logic_loop
 
 .func_xor:
 	call rand
@@ -178,17 +173,19 @@ mov r15, ModRegRM
 	xchg al, ah
 	mov [r12], ax
 	mov [r13], cx
+	mov [r12], ax
+	mov [r13], cx
 	add r12, 0x2
 	jmp .encrypt_logic_loop	
 
 
 .encrypt_function_load_values:
 
-	; ; protect the encryption function buffer from write operations
-	; mov     rdi, [rbp-0x10]
-	; mov     rsi, [rbp-0x8 ]
-	; mov     edx, 0x5
-	; call    mprotect
+	; protect the encryption function buffer from write operations
+	mov     rdi, [rbp-0x10]
+	mov     rsi, [rbp-0x8 ]
+	mov     edx, 0x5
+	call    mprotect
 
 	; mov rbx, [rbp-0x30]
 	; mov rsi, [rbp-0x28]
