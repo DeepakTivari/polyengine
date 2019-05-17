@@ -172,11 +172,11 @@ add r13, FUNC_SIZE
 
 .encrypt_function_load_values:
 
-	; ; call decrypt engine
-	; mov rdi, [rbp-0x28]
-	; add rdi, [rbp-0x20]
-	; mov rsi, [rbp-0x18]
-	; call work_engine
+	; call decrypt engine
+	mov rdi, [rbp-0x28]
+	add rdi, [rbp-0x20]
+	mov rsi, [rbp-0x18]
+	call work_engine
 
 	mov rbx, [rbp-0x28]
 	mov rsi, [rbp-0x20]
