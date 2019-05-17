@@ -4,7 +4,7 @@
 #git clean -xdf
 # make
 
-objdump -x virus | grep -E "_start|main|.decryption_function|.encryption_function"
+objdump -x virus | grep -w -E "_start|main|decrypt_engine.decryption_function"
 # # echo polymake virus 5a0 30 563
 
 # #./polymake virus 5d0 30 598

@@ -1,9 +1,9 @@
-To run:
 
-     make
+Polymorphicengine make:
 
+     run make
+     objdump -x virus | grep -w -E "_start|main|decrypt_engine.decryption_function"
 
-Get shellcodes: http://shell-storm.org/shellcode/
+     add the VMA addresses to the polymorphic.c in their respective regions
 
-
-Convert Assembly syntax: http://manpages.ubuntu.com/manpages/bionic/man1/intel2gas.1.html
+     make again & the virus is now polymorphic
