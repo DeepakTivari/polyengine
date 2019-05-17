@@ -49,8 +49,8 @@ int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encry
       virus_instruction_begin  = (int)strtol(main_offset, NULL, 16);
 	virus_decrypt_offset  = (int)strtol(decryption_offset, NULL, 16);
 
-    //   printf("%ul\n", virus_instruction_begin);
-    //   printf("%ul\n", virus_decrypt_offset);
+      printf("%ul\n", virus_instruction_begin);
+      printf("%ul\n", virus_decrypt_offset);
 
 
 

