@@ -37,10 +37,6 @@ mov [rbp-0x10],	rcx ; offset of decrypter section
 ; protect rdi from corruptio
 mov r15, rdi
 
-; call decrypt engine
-add rdi, rsi
-mov rsi, rdx
-call work_engine
 
 ; ; do stuff here
 ; call getpagesize
@@ -132,13 +128,10 @@ add r13, FUNC_SIZE
 	mov cl, OPCODE_SUB_REG
 	xchg al, ah
 	mov [r12], ax
-	mov [r12], ax
-	mov [r12], ax
-	mov [r12], ax
+	xor r15, r15
+	mov r15w, [r12]
 	mov [r13], cx
-	mov [r13], cx
-	mov [r13], cx
-	mov [r13], cx
+	mov r15w, [r12]
 	add r12, 0x2
 	jmp .encrypt_logic_loop
 
@@ -169,18 +162,21 @@ add r13, FUNC_SIZE
 	mov cl, OPCODE_XOR
 	xchg al, ah
 	mov [r12], ax
-	mov [r12], ax
-	mov [r12], ax
-	mov [r12], ax
+	xor r15, r15
+	mov r15w, [r12]
 	mov [r13], cx
-	mov [r13], cx
-	mov [r13], cx
-	mov [r13], cx
+	mov r15, [r12]
 	add r12, 0x2
 	jmp .encrypt_logic_loop	
 
 
 .encrypt_function_load_values:
+
+	; ; call decrypt engine
+	; mov rdi, [rbp-0x28]
+	; add rdi, [rbp-0x20]
+	; mov rsi, [rbp-0x18]
+	; call work_engine
 
 	mov rbx, [rbp-0x28]
 	mov rsi, [rbp-0x20]
@@ -199,38 +195,7 @@ add r13, FUNC_SIZE
 	mov edx, [rsi+0xC]
 
 .encryption_function:
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
+	times FUNC_SIZE db OP_NOP
 	; put back the data to where it was taken from
 	mov [rsi], eax
 	mov [rsi+0x4], ebx
