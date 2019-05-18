@@ -42,6 +42,7 @@ mov rcx, rax
 sub rcx, 0x1
 not rcx
 mov rdi, rdi
+mov r10, rdi
 and rdi, rcx
 ; AND them and the result will be stored in rcx
 ; rdi must hold the page_start address
@@ -49,6 +50,8 @@ and rdi, rcx
 mov r12, rdi
 mov r13, rsi 
 lea rsi, [rdi+rsi]      ;rsi = end
+sub r10, rdi
+add rsi, r10
 sub rsi,rdi      ;rsi = end - aligned_start = length
 
 mov rdx, 0x7

