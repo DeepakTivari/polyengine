@@ -2,6 +2,7 @@
 
 extern main
 extern polymorphic
+extern getfilename
 ; Define variables in the data section
 section .data
 	hello:     db 'Hello world!',10
@@ -25,6 +26,19 @@ _start:             ; Global entry point
 	mov rsi, _start
 	sub rsi, main
 	call decrypt_engine
+
+	; reload the initial program, state
+	mov rsp, rbx 
+	mov rdi, r14
+	mov rsi, r15
+
+	; call the function to get the self name from argv[0]
+	xor rbp, rbp
+	pop rdi
+	mov rsi, rsp
+	lea rdx, [rsp+rdi+8*8]
+	push rdi
+	call getfilename
 
 	; reload the initial program, state
 	mov rsp, rbx 
