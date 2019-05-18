@@ -2,8 +2,8 @@
 Polymorphicengine make:
 
      run make
-     objdump -x virus | grep -w -E "_start|main|decrypt_engine.decryption_function"
+     objdump -x virus | grep -w -E "main"
 
-     add the VMA addresses to the polymorphic.c in their respective regions
+     add the offset of main function in the define _main_ in the polymorphic.c file
 
      make again & the virus is now polymorphic
