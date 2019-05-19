@@ -48,6 +48,10 @@ and     rsi, rcx
 mov     edx, 0x7
 call    mprotect
 
+; check if mprotect worked
+cmp eax, 0
+jne .E1
+
 
 ; set up needed values
 mov r12, .encryption_function
@@ -56,9 +60,9 @@ add rbx, FUNC_SIZE
 sub rbx, 0x1
 ; must use rbx here because rbx is the only one that will not change on rand call later
 mov r13, [rbp-0x28]
-add r13, [rbp-0x10] 
+add r13, [rbp-0x10]
 add r13, FUNC_SIZE
-; end of 
+; end of
 mov r15, ModRegRM
 
 
@@ -124,7 +128,7 @@ mov r15, ModRegRM
 	mov [r12], ax
 	mov [r13], cx
 	add r12, 0x2
-	jmp .encrypt_logic_loop	
+	jmp .encrypt_logic_loop
 
 
 .encrypt_function_load_values:
@@ -164,7 +168,7 @@ mov r15, ModRegRM
 	;compare if rsi = rdi, signalling end of decryption
 	jne .encryption_loop
 
-	xor rax,rax 
+	xor rax,rax
 	; this will ensure rax = 0 , means completed without error
 
 
@@ -176,3 +180,19 @@ pop rbx
 mov rsp, rbp
 pop rbp
 ret
+
+.E1:
+	mov	edx,msglen     ;message length
+	mov	ecx,msg     ;message to write
+	mov	ebx,1       ;file descriptor (stdout)
+	mov	eax,4       ;system call number (sys_write)
+	int	0x80        ;call kernel
+
+	mov eax, 1
+   mov ebx, 0
+	int 80h
+
+
+section .rodata
+  msg: db "mprotect failed", 10
+  msglen: equ $ - msg
