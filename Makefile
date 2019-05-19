@@ -37,12 +37,12 @@ CC = gcc
 LCC = ld
 AFLAGS = -felf64 -g -F dwarf 
 
-CFLAGS = -c -nostartfiles -Wall -O2 -g -nostdlib  -nodefaultlibs
+CFLAGS = -c -nostartfiles -Wall -O2 -g   -m64
 
 LFLAGS = -no-pie 
 KFLAGS = -no-pie -nostartfiles -m64 -g -falign-functions=16 
 CKFLAGS = -no-pie -nostartfiles  -m64 -g -falign-functions=16 
-MFLAGS = -no-pie -r -nostartfiles 
+MFLAGS = -no-pie -r -nostdlib
 MCFLAGS = -no-pie -r -nostdlib
 all: virus hello  polymorphic.o superpolymorphic.o
 
