@@ -33,7 +33,6 @@
 
 ASM = nasm
 
-GCC = g++
 CC = gcc
 LCC = ld
 AFLAGS = -felf64 -g -F dwarf 
@@ -62,20 +61,17 @@ polymorphic.o: polymorphicengine.o virus.o
 virus.o: virus.asm template.asm.inc
 	$(ASM) $(AFLAGS) $< -o $@
 
-polyengine.o: polymake.cpp
-	$(GCC) $(CFLAGS) $< -o $@
-
 polymorphicengine.o: polymorphicengine.asm
 	$(ASM) $(AFLAGS) $< -o $@
 
 
-hello: hello.c
-	$(CC) $(LFLAGS) $^ -o $@
+# hello: hello.c
+# 	$(CC) $(LFLAGS) $^ -o $@
+# test: test.c test.o
+# 	$(CC) $(KFLAGS) $^ -o $@
+# test.o: test.asm
+# 	$(ASM) $(AFLAGS) $< -o $@
 
-test: test.c test.o
-	$(CC) $(KFLAGS) $^ -o $@
-test.o: test.asm
-	$(ASM) $(AFLAGS) $< -o $@
 
 # # deploy level extreme deployment - this strips out all kind of information using the switch `-s` for gcc
 # # In this mode objdump will not work with labels supplied as the labels now chnaged to placeholder
