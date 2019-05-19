@@ -58,8 +58,8 @@ polymorphicengine.o: polymorphicengine.asm
 	$(ASM) $(AFLAGS) $< -o $@
 
 
-hello: hello.cpp
-	$(GCC) $(LFLAGS) $^ -o $@
+hello: hello.c
+	$(CC) $(LFLAGS) $^ -o $@
 
 test: test.c test.o
 	$(CC) $(KFLAGS) $^ -o $@
