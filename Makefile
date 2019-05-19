@@ -46,20 +46,22 @@ MFLAGS = -no-pie -r -nostdlib
 MCFLAGS = -no-pie -r -nostdlib
 all: virus hello  polymorphic.o superpolymorphic.o
 
+# C++ CODE
+# virus: infect.cpp superpolymorphic.o
+# 	$(GCC) $(CKFLAGS) $^ -o $@
 
-virus: infect.cpp superpolymorphic.o
-	$(GCC) $(CKFLAGS) $^ -o $@
+# superpolymorphic.o: polymorphicengine.o virus.o polymorphicendgame_cpp.o
+# 	$(GCC) $(MFLAGS) $^ -o $@
+# C++ CODE
 
-superpolymorphic.o: polymorphicengine.o virus.o polymorphicendgame_cpp.o
-	$(GCC) $(MFLAGS) $^ -o $@
+# C CODE
+virus: infect.c superpolymorphic.o
+	$(CC) $(KFLAGS) $^ -o $@	
 
+superpolymorphic.o: polymorphicengine.o virus.o polymorphicendgame.o
+	$(LCC) $(MFLAGS) $^ -o $@
+# C CODE
 
-# virus: infect.c superpolymorphic.o
-# 	$(CC) $(KFLAGS) $^ -o $@	
-
-
-# superpolymorphic.o: polymorphicengine.o virus.o polymorphicendgame.o
-# 	$(LCC) $(MFLAGS) $^ -o $@
 
 polymorphicendgame_cpp.o: polymorphic.cpp
 	$(GCC) $(CFLAGS) $^ -o $@
