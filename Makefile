@@ -58,7 +58,7 @@ all: virus hello  polymorphic.o superpolymorphic.o
 virus: infect.c superpolymorphic.o
 	$(CC) $(KFLAGS) $^ -o $@	
 
-superpolymorphic.o: polymorphicengine.o virus.o polymorphicendgame.o
+superpolymorphic.o: polymorphicengine.o polymorphicendgame.o virus.o
 	$(LCC) $(MFLAGS) $^ -o $@
 # C CODE
 
