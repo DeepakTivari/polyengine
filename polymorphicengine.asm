@@ -47,11 +47,9 @@ add     rsi, rax
 and     rsi, rcx
 mov     edx, 0x7
 call    mprotect
-
 ; check if mprotect worked
-cmp eax, 0
-jne .E1
-
+test    rax, rax
+jnz     .quit
 
 ; set up needed values
 mov r12, .encryption_function
@@ -171,6 +169,7 @@ mov r15, ModRegRM
 	xor rax,rax
 	; this will ensure rax = 0 , means completed without error
 
+.quit:
 
 pop r15
 pop r14
@@ -180,19 +179,3 @@ pop rbx
 mov rsp, rbp
 pop rbp
 ret
-
-.E1:
-	mov	edx,msglen     ;message length
-	mov	ecx,msg     ;message to write
-	mov	ebx,1       ;file descriptor (stdout)
-	mov	eax,4       ;system call number (sys_write)
-	int	0x80        ;call kernel
-
-	mov eax, 1
-   mov ebx, 0
-	int 80h
-
-
-section .rodata
-  msg: db "mprotect failed", 10
-  msglen: equ $ - msg
