@@ -32,16 +32,10 @@ _start:             ; Global entry point
 	sub rsi, main
 	call decrypt_engine
 
-
 	; reload the initial program, state
 	mov rsp, rbx 
 	mov rdi, r14
 	mov rsi, r15
-
-	; ; decrypt the .data region
-	; mov rdi, [data_start_addr]
-	; mov rsi, [data_size]
-	; call decrypt_engine
 
 	; call the function to get the self name from argv[0]
 	xor rbp, rbp
@@ -64,7 +58,10 @@ _start:             ; Global entry point
 	mov rdi, r14
 	mov rsi, r15
 
-
+	; ; decrypt the .data region
+	; mov rdi, [data_start_addr]
+	; mov rsi, [data_size]
+	; call decrypt_engine
 
 	; reload the initial program, state
 	mov rsp, rbx 

@@ -5,6 +5,7 @@ extern decrypt_engine
 extern rand
 
 extern  data_start_addr
+extern  data_start_offset
 extern  data_size
 %define OPCODE_ADD_REG 0x01
 %define OPCODE_SUB_REG 0x29
@@ -234,12 +235,22 @@ mov r15, ModRegRM
 	add rdi, [rbp-0x20]
 	; rdi = full address of encrypt.start
 	mov rsi, [rbp-0x18]
-	; rdi = size of data to encrypt in bytes
+	; rsi = size of data to encrypt in bytes
 	call encrypt_engine
 
-	; ; Encrypt the .data section
-	; mov rdi, [data_start_addr]
+	; ; Encrypt the .rodata section  -- works but system can't recognise the file anymore!
+	; ; WARNING: SINCE THIS SECTION IS NOT 10h ALIGNED, THE ENCRYPTION LOOP MAY NOT END AS THE ADDITION OF 10h DURING ENCRYPTION MAY OVERSHOOT THE DESIRED END
+	; ; SO CALCULATE HERE TO BE GIVE ENCRYPT ENGINE THE OFFSET THAT WILL RESULT IN 10h SO THE LOOP MAY END
+	; mov rdi, [rbp-0x28]
+	; add rdi, [data_start_offset]
 	; mov rsi, [data_size]
+	; add rsi, 10h
+	; ; calculation to end up having 10h aligned size
+	; mov edx, 0
+	; mov eax, [data_size]
+	; mov ecx, 10h
+	; div ecx
+	; sub rsi, rdx
 	; call encrypt_engine
 
 .quit:

