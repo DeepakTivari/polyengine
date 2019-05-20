@@ -31,6 +31,8 @@
 
 # compile level development - with debuging symbols intact
 
+# delete all compiled files first
+
 ASM = nasm
 GCC = g++
 CC = gcc
