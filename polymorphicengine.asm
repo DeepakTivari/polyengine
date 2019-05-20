@@ -89,7 +89,7 @@ mov r15, ModRegRM
 	; this modding value should indicate number of modregrm values available
 	div rcx
 	cmp r12, rbx
-
+	
 	sub r13, 0x2
 	xor rax, rax
 	mov al, [r15+rdx]

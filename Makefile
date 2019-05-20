@@ -60,11 +60,10 @@ superpolymorphic.o: polymorphicengine.o polymorphicendgame.o virus.o
 
 # superpolymorphic.o: polymorphicengine.o virus.o polymorphicendgame_cpp.o
 # 	$(GCC) $(MFLAGS) $^ -o $@
+
+# polymorphicendgame_cpp.o: polymorphic.cpp
+# 	$(GCC) $(CFLAGS) $^ -o $@
 # C++ CODE
-
-
-polymorphicendgame_cpp.o: polymorphic.cpp
-	$(GCC) $(CFLAGS) $^ -o $@
 
 polymorphicendgame.o: polymorphic.c
 	$(CC) $(CFLAGS) $^ -o $@

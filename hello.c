@@ -15,8 +15,9 @@ void    print_section(Elf64_Shdr *shdr, char *strTab, int shNum, uint8_t *data)
 
   for(i = 0; i < shNum; i++) {
     size_t k;
-     printf("%02d: %s Offset %lx\n", i, &strTab[shdr[i].sh_name], 
-        shdr[i].sh_offset);
+    if(strcmp(".text", &strTab[shdr[i].sh_name]) == 0){
+      // offset =  shdr[i].sh_offset;
+    }
   }
 }
 
