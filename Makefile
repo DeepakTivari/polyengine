@@ -8,7 +8,7 @@ CFLAGS = -c -Wall -O2 -g -m64  -falign-functions=16
 
 KFLAGS = -no-pie -nostartfiles
 MFLAGS = -no-pie -r -nostdlib
-all: virus
+all: c_virus asm_virus
 
 # C EXTERNAL
 
