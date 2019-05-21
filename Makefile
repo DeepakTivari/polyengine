@@ -6,8 +6,8 @@ CC = gcc
 AFLAGS = -felf64 -g -F dwarf 
 CFLAGS = -c -Wall -O2 -g -m64  -falign-functions=16 
 
-KFLAGS = -no-pie -nostartfiles
-MFLAGS = -no-pie -r -nostdlib
+KFLAGS = -no-pie -nostartfiles -g
+MFLAGS = -no-pie -r -nostdlib -g
 all: c_virus asm_virus
 
 # C EXTERNAL
