@@ -35,9 +35,6 @@ turbopolymorphic.o: polymorphicengine.o polymorphichandler.o bootloader.o
 polymorphichandler.o: polymorphichandler.c
 	$(CC) $(CFLAGS) $^ -o $@
 
-polymorphic.o: polymorphicengine.o bootloader.o
-	$(CC) $(MFLAGS) $^ -o $@
-
 bootloader.o: bootloader.asm template.asm.inc
 	$(ASM) $(AFLAGS) $< -o $@
 
