@@ -9,3 +9,5 @@ hello
 *.nam
 *.til
 *.a
+asm_virus
+c_virus
