@@ -18,10 +18,10 @@ c_virus: external.c turbopolymorphic.o
 
 # ASM EXTERNAL
 
-asm_virus: external.c turbopolymorphic.o
+asm_virus: externalasm.o turbopolymorphic.o
 	$(CC) $(KFLAGS) $^ -o $@	
 
-external.o: external.asm
+externalasm.o: external.asm
 	$(ASM) $(AFLAGS) $< -o $@
 
 # ASM EXTERNAL
