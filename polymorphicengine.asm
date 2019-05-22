@@ -210,7 +210,7 @@ mov r15, ModRegRM
 
 .encrypt_function_load_values:
 
-	; Decrypt section
+	; Decrypt section, call this to decrypt the loaded file before encryption with new scheme
 	mov rdi, [rbp-0x28]
 	add rdi, [rbp-0x20]
 	mov rsi, [rbp-0x18]

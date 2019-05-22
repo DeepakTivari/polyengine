@@ -3,10 +3,8 @@
 extern main
 extern polymorphic
 extern getfilename
-; Define variables in the data section
+
 section .data
-	hello:     db 'Hello world!',10
-	helloLen:  equ $-hello
 
 ; Code goes in the text section
 section .text
@@ -62,13 +60,6 @@ _start:             ; Global entry point
 	mov rdi, rax
 	mov eax, 1
 	int 80h
-
-
-	; ; Terminate program standard nasm way
-	; mov eax,1            ; 'exit' system call
-	; mov ebx,0            ; exit with error code 0
-	; int 80h              ; call the kernel
-
 
 
 decrypt_engine:
