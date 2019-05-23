@@ -1,11 +1,5 @@
-virus
-polyengine
-*.o
-.vscode
-polymake
-virus_morph
-hello
-*.id*
-*.nam
-*.til
-*.a
+*
+!*.asm
+!*.c
+!*.md
+!*.inc
