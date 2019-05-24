@@ -6,7 +6,7 @@ extern rand
 %define OPCODE_ADD_REG 0x01
 %define OPCODE_SUB_REG 0x29
 %define OPCODE_XOR     0x31
-
+%define OPCODE_NOP	   0x90
 section .data
 	align 8
 	ModRegRM  db 0xCB, 0xD8, 0xC1, 0xC8, 0xD0, 0xD1, 0xD9, 0xC2, 0xCA, 0xDA, 0xC3, 0xD3
@@ -148,7 +148,7 @@ mov r15, ModRegRM
 .encrypt_logic_loop:
 	call rand
 	xor rdx, rdx
-	mov rcx, 2
+	mov rcx, 4
 	; mod by function
 	div rcx
 	cmp r12, rbx
@@ -157,7 +157,9 @@ mov r15, ModRegRM
 	jmp [.jump_function_table+rdx*8]
 	align 4
 	.jump_function_table: dq .func_add_reg,
-						  dq .func_xor
+						  dq .func_sub_reg,
+						  dq .func_xor,
+						  dq .func_nop
 
 
 
@@ -183,7 +185,26 @@ mov r15, ModRegRM
 	add r12, 0x2
 	jmp .encrypt_logic_loop
 
-
+.func_sub_reg:
+	call rand
+	xor rdx, rdx
+	mov rcx, 12
+	; mod by ModRegRM
+	div rcx
+	cmp r12, rbx
+	sub r13, 0x2
+	xor rax, rax
+	mov al, [r15+rdx]
+	; ModRegRM valid location
+	xor rcx, rcx
+	mov ch, al
+	mov ah, OPCODE_SUB_REG
+	mov cl, OPCODE_ADD_REG
+	xchg al, ah
+	mov [r12], ax
+	mov [r13], cx
+	add r12, 0x2
+	jmp .encrypt_logic_loop
 
 .func_xor:
 	call rand
@@ -207,6 +228,28 @@ mov r15, ModRegRM
 	add r12, 0x2
 	jmp .encrypt_logic_loop
 
+
+.func_nop:
+	call rand
+	xor rdx, rdx
+	mov rcx, 12
+	; mod by ModRegRM
+	div rcx
+	cmp r12, rbx
+
+	sub r13, 0x2
+	xor rax, rax
+	mov al, OPCODE_NOP
+	; ModRegRM valid location
+	xor rcx, rcx
+	mov ch, al
+	mov ah, OPCODE_NOP
+	mov cl, OPCODE_NOP
+	xchg al, ah
+	mov [r12], ax
+	mov [r13], cx
+	add r12, 0x2
+	jmp .encrypt_logic_loop
 
 .encrypt_function_load_values:
 
